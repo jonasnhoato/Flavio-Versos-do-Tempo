@@ -9,7 +9,7 @@ export function BlogIntroduction() {
       <div>
         <div className="ed-kicker ed-mono">Um caderno em movimento</div>
         <h1 id="ed-author">Flavio <span>Nhoato</span></h1>
-        <div className="ed-hero-caption ed-mono">VERSOS DO TEMPO <span aria-hidden="true">/</span> TEXTOS, UM DIA DE CADA VEZ</div>
+        <div className="ed-hero-caption ed-mono">VERSOS DO TEMPO <span aria-hidden="true">/</span> IDEIAS, UM DIA DE CADA VEZ</div>
       </div>
       <div className="ed-intro">
         <div className="ed-intro-label ed-mono">Boas-vindas</div>

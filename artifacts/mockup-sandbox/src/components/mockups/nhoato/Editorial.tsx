@@ -263,7 +263,7 @@ export function Editorial() {
           <div>
             <div className="ed-kicker ed-mono">Um caderno em movimento</div>
             <h1 id="ed-author">Flavio <span>Nhoato</span></h1>
-            <div className="ed-hero-caption ed-mono">VERSOS DO TEMPO <span aria-hidden="true">/</span> TEXTOS, UM DIA DE CADA VEZ</div>
+            <div className="ed-hero-caption ed-mono">VERSOS DO TEMPO <span aria-hidden="true">/</span> IDEIAS, UM DIA DE CADA VEZ</div>
           </div>
           <div className="ed-intro">
             <div className="ed-intro-label ed-mono">Boas-vindas</div>
@@ -288,7 +288,7 @@ export function Editorial() {
             <div className="ed-feed-header">
               <div className="ed-feed-heading">
                 <div className="ed-feed-overline ed-mono">Leitura em ordem de chegada</div>
-                <h2 id="ed-feed-title">Os textos</h2>
+                <h2 id="ed-feed-title">As ideias</h2>
                 <div className="ed-feed-count">{filteredPoems.length} {filteredPoems.length === 1 ? 'texto' : 'textos'} nesta seleção</div>
               </div>
               <label className="ed-search-wrap">

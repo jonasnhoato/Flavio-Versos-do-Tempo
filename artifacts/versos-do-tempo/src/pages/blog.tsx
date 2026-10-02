@@ -113,7 +113,7 @@ export default function Blog() {
           <div className="ed-feed-header">
             <div className="ed-feed-heading">
               <div className="ed-feed-overline ed-mono">Um acervo para percorrer</div>
-              <h2 id="ed-feed-title">Os textos</h2>
+              <h2 id="ed-feed-title">As ideias</h2>
               <p className="ed-feed-count">{list.isLoading ? 'Abrindo o caderno…' : `${shown.length} ${shown.length === 1 ? 'texto' : 'textos'} nesta seleção`}</p>
             </div>
             <div className="ed-search-wrap">
