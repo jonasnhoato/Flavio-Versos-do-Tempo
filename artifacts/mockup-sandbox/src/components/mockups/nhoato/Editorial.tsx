@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { FormEvent } from 'react';
-import { ArrowDown, ArrowUp, CalendarDays, Check, Copy, GripVertical, LockKeyhole, LogIn, Mail, Plus, Search, X } from 'lucide-react';
+import { ArrowDown, ArrowUp, CalendarDays, Check, Copy, FileText, GripVertical, LockKeyhole, LogIn, Mail, Minus, Plus, Search, X } from 'lucide-react';
 import { FaFacebookF, FaWhatsapp } from 'react-icons/fa';
-import { introduction, poems as samplePoems, type Poem } from './_source/data';
+import { introduction, type Poem } from './_source/data';
 import './Editorial.css';
 
 type ArchiveSelection = { year?: string; month?: string; day?: string };
@@ -21,7 +21,8 @@ const poemUrl = (poem: Poem) => `${window.location.origin}${window.location.path
 const blankDraft = (): Draft => ({ title: '', content: '', date: dateKey(new Date().toISOString()) });
 
 export function Editorial() {
-  const [poemList, setPoemList] = useState<Poem[]>(() => samplePoems.map((poem) => ({ ...poem })));
+  const [poemList, setPoemList] = useState<Poem[]>([]);
+  const [fontStep, setFontStep] = useState(1);
   const [search, setSearch] = useState('');
   const [selection, setSelection] = useState<ArchiveSelection>({});
   const [modalOpen, setModalOpen] = useState(false);
@@ -192,7 +193,7 @@ export function Editorial() {
   const archiveTree = (
     <div className="ed-archive-inner">
       <button className={`ed-archive-all${!selection.year ? ' is-active' : ''}`} onClick={() => setSelection({})}>Todos os textos <span className="ed-count">{poemList.length}</span></button>
-      {archive.length === 0 && <p className="ed-archive-empty">Ainda sem datas no arquivo.</p>}
+      {archive.length === 0 && <p className="ed-archive-empty">O arquivo começa com o primeiro texto.</p>}
       {archive.map((year) => (
         <details className="ed-year" key={year.year} open={selection.year === year.year || undefined}>
           <summary aria-label={`Ano ${year.year}, ${year.count} textos`}><span>{year.year}</span><span className="ed-count">{year.count}</span></summary>
@@ -233,7 +234,7 @@ export function Editorial() {
   );
 
   return (
-    <div className={`ed${authorPreview ? ' ed-author-view' : ''}`}>
+    <div className={`ed${authorPreview ? ' ed-author-view' : ''}${fontStep === 0 ? ' ed-font-small' : fontStep === 2 ? ' ed-font-large' : ''}`}>
       <header className="ed-topbar">
         <a className="ed-brand" href="#inicio" aria-label="Flavio Nhoato — início">
           <svg className="ed-mark" aria-hidden="true" viewBox="0 0 52 52" fill="none">
@@ -246,8 +247,8 @@ export function Editorial() {
           <span><span className="ed-brand-name">Flavio Nhoato</span><span className="ed-brand-title">Versos do Tempo</span></span>
         </a>
         <nav className="ed-nav" aria-label="Navegação principal">
-          <a href="#arquivo">Arquivo</a>
-          <a href="#poemas">Textos</a>
+          <a className="ed-nav-link" href="#arquivo"><CalendarDays size={14} aria-hidden="true" /><span>Arquivo</span></a>
+          <a className="ed-nav-link" href="#poemas"><FileText size={14} aria-hidden="true" /><span>Textos</span></a>
           {authorPreview ? (
             <div className="ed-author-nav">
               <span className="ed-author-badge"><span aria-hidden="true" />Modo do autor</span>
@@ -255,6 +256,10 @@ export function Editorial() {
             </div>
               ) : <button className="ed-access-button" aria-label="Entrar no acesso do autor" onClick={() => { setLoginError(''); setLoginOpen(true); }}><LogIn size={15} />Entrar</button>}
         </nav>
+        <div className="ed-font-controls" role="group" aria-label="Tamanho do texto">
+          <button type="button" aria-label="Diminuir tamanho do texto" title="Diminuir fonte" onClick={() => setFontStep((step) => Math.max(0, step - 1))} disabled={fontStep === 0}>A<Minus size={10} aria-hidden="true" /></button>
+          <button type="button" aria-label="Aumentar tamanho do texto" title="Aumentar fonte" onClick={() => setFontStep((step) => Math.min(2, step + 1))} disabled={fontStep === 2}>A<Plus size={10} aria-hidden="true" /></button>
+        </div>
       </header>
       {authorPreview && <div className="ed-preview-notice"><LockKeyhole size={14} /> Você está vendo a prévia das ferramentas do autor. Essas alterações são apenas demonstrativas e não são salvas no site.</div>}
 
@@ -270,8 +275,6 @@ export function Editorial() {
             {introduction.replaceAll('poesia', 'textos').replaceAll('poemas', 'textos').replaceAll('poema', 'texto').split('\n\n').map((paragraph, index) => <p key={index}>{paragraph}</p>)}
           </div>
         </section>
-
-        <div className="ed-disclaimer"><span className="ed-demo-dot" aria-hidden="true" />Os poemas marcados como “Texto de demonstração” são exemplos e não são de autoria de Flavio.</div>
 
         <div className="ed-main">
           <aside className="ed-archive" id="arquivo">
@@ -293,10 +296,18 @@ export function Editorial() {
               </div>
               <label className="ed-search-wrap">
                 <Search className="ed-search-icon" size={16} aria-hidden="true" />
-                <input className="ed-search" type="search" aria-label="Buscar poemas" placeholder="Buscar título ou verso" value={search} onChange={(event) => setSearch(event.target.value)} />
+                <input className="ed-search" type="search" aria-label="Buscar ideias" placeholder="Buscar título ou trecho" value={search} onChange={(event) => setSearch(event.target.value)} />
               </label>
             </div>
-            {authorPreview && <div className="ed-author-tools"><button className="ed-add-nav" onClick={openNew}><Plus size={15} strokeWidth={2.5} /> Adicionar texto</button><span>Arraste a alça de um poema para reorganizá-lo.</span></div>}
+            {!authorPreview && (
+              <div className="ed-publish-access">
+                <span>Publicação exclusiva do autor</span>
+                <button type="button" className="ed-publish-cta" onClick={() => { setLoginError(''); setLoginOpen(true); }} data-testid="button-add-text">
+                  <Plus size={15} strokeWidth={2.5} aria-hidden="true" />Adicionar texto
+                </button>
+              </div>
+            )}
+            {authorPreview && poemList.length > 0 && <div className="ed-author-tools"><button className="ed-add-nav" onClick={openNew}><Plus size={15} strokeWidth={2.5} /> Adicionar texto</button><span>Arraste a alça para reorganizar.</span></div>}
             {filteredPoems.length ? (
               <div>
                 {filteredPoems.map((poem, index) => {
@@ -331,7 +342,7 @@ export function Editorial() {
                         <div className="ed-poem-index">{String(index + 1).padStart(2, '0')}</div>
                         <div className="ed-poem-main">
                           <button type="button" className="ed-poem-open-title" onClick={() => openReader(poem)} aria-label={`Ler ${poem.title} completo`}><h3>{poem.title}</h3></button>
-                          <div className="ed-poem-meta"><time dateTime={poem.createdAt}>{formatDate(poem.createdAt)}</time>{poem.isExample && <span className="ed-example">Texto de demonstração</span>}</div>
+                          <div className="ed-poem-meta"><time dateTime={poem.createdAt}>{formatDate(poem.createdAt)}</time></div>
                         </div>
                       </div>
                       <button type="button" className="ed-poem-open-excerpt" onClick={() => openReader(poem)} aria-label={`Abrir o texto completo: ${poem.title}`}>
@@ -359,9 +370,13 @@ export function Editorial() {
               </div>
             ) : (
               <div className="ed-empty">
-                <strong>Nenhum texto nesta busca.</strong>
-                Tente outro título ou verso, ou escolha outra data no arquivo.
-                {(search || selection.year) && <div><button onClick={() => { setSearch(''); setSelection({}); }}>Limpar busca e datas</button></div>}
+                <strong>{poemList.length === 0 ? 'Seu caderno começa aqui.' : 'Nenhum texto nesta busca.'}</strong>
+                {poemList.length === 0
+                  ? authorPreview
+                    ? <>Comece com uma ideia, uma lembrança ou uma divagação.<br /><button type="button" className="ed-empty-first" onClick={openNew}><Plus size={17} />Adicionar o primeiro texto</button></>
+                    : 'Os textos publicados aparecerão aqui. O acesso de edição é reservado ao autor.'
+                  : <>Tente outro título ou trecho, ou escolha outra data no arquivo.</>}
+                {poemList.length > 0 && (search || selection.year) && <div><button onClick={() => { setSearch(''); setSelection({}); }}>Limpar busca e datas</button></div>}
               </div>
             )}
           </section>
@@ -376,7 +391,7 @@ export function Editorial() {
               <div>
                 <div className="ed-feed-overline ed-mono">Leitura integral</div>
                 <h2 id="ed-reader-title">{readingPoem.title}</h2>
-                <div className="ed-poem-meta"><time dateTime={readingPoem.createdAt}>{formatDate(readingPoem.createdAt)}</time>{readingPoem.isExample && <span className="ed-example">Texto de demonstração</span>}</div>
+                <div className="ed-poem-meta"><time dateTime={readingPoem.createdAt}>{formatDate(readingPoem.createdAt)}</time></div>
               </div>
               <button type="button" className="ed-modal-close" aria-label="Fechar leitura integral" autoFocus onClick={closeReader}><X size={18} /></button>
             </header>

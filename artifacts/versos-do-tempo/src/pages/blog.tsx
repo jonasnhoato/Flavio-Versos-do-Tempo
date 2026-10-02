@@ -134,7 +134,7 @@ export default function Blog() {
         {list.isLoading ? <PoemSkeleton /> : list.isError ? (
           <Notice role="alert" title="Não foi possível abrir os textos" action={<button type="button" className={`${pillBtn} bg-primary text-primary-foreground`} onClick={() => list.refetch()} data-testid="button-retry">Tentar de novo</button>}>{errMsg(list.error)}</Notice>
         ) : order.length === 0 ? (
-          <Notice title="O caderno ainda está em branco" action={canEdit ? <button type="button" onClick={openNew} className={`${pillBtn} bg-primary text-primary-foreground`}><Plus size={22} />Adicionar o primeiro texto</button> : undefined}>Quando houver poemas, eles aparecerão aqui.</Notice>
+          <Notice title="O caderno ainda está em branco" action={canEdit ? <button type="button" onClick={openNew} className={`${pillBtn} bg-primary text-primary-foreground`}><Plus size={22} />Adicionar o primeiro texto</button> : undefined}>Quando houver textos, eles aparecerão aqui.</Notice>
         ) : shown.length === 0 ? (
           <Notice title="Nenhum texto encontrado" action={<button type="button" className={`${pillBtn} border border-input`} onClick={() => { setQ(''); setSel({}); }} data-testid="button-clear-filters">Limpar busca e datas</button>}>Tente outra palavra ou outra data.</Notice>
         ) : canDrag ? (

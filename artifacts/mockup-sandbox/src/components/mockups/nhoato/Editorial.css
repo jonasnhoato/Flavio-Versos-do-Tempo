@@ -48,6 +48,15 @@
   font-size: 12px; cursor: pointer; padding: 10px 0;
 }
 .ed .ed-nav a:hover, .ed .ed-nav button:hover { color: var(--ed-accent); }
+.ed .ed-nav .ed-nav-link { display: inline-flex; align-items: center; gap: 7px; }
+.ed .ed-nav .ed-nav-link svg { flex: 0 0 auto; }
+.ed .ed-font-controls { display: flex; align-items: center; gap: 2px; margin-left: 18px; padding-left: 11px; border-left: 1px solid var(--ed-line); }
+.ed .ed-font-controls button { display: inline-flex; align-items: center; justify-content: center; gap: 3px; min-width: 30px; min-height: 32px; padding: 0 5px; color: var(--ed-soft); background: transparent; border: 0; border-radius: 3px; font: 11px 'DM Mono', monospace; cursor: pointer; transition: color .16s ease, background .16s ease; }
+.ed .ed-font-controls button:hover:not(:disabled) { color: var(--ed-accent); background: var(--ed-surface-raised); }
+.ed .ed-font-controls button:disabled { opacity: .4; cursor: default; }
+.ed .ed-font-controls button:focus-visible { outline: 2px solid var(--ed-accent); outline-offset: 2px; }
+.ed.ed-font-small .ed-poem-text, .ed.ed-font-small .ed-reader-content { font-size: 20px; }
+.ed.ed-font-large .ed-poem-text, .ed.ed-font-large .ed-reader-content { font-size: 24px; }
 .ed .ed-nav .ed-add-nav {
   color: var(--ed-accent-ink); background: var(--ed-accent); padding: 11px 16px;
   border-radius: 3px; font-weight: 800; display: inline-flex; align-items: center; gap: 8px;
@@ -158,6 +167,14 @@
 }
 .ed .ed-empty strong { color: var(--ed-ink); display: block; font-size: 18px; margin-bottom: 8px; }
 .ed .ed-empty button { background: none; border: 0; padding: 8px 0; color: var(--ed-accent); cursor: pointer; }
+.ed .ed-empty .ed-empty-first { display: inline-flex; align-items: center; justify-content: center; gap: 9px; min-height: 46px; margin-top: 18px; padding: 0 18px; border: 1px solid var(--ed-accent); border-radius: 3px; background: var(--ed-accent); color: var(--ed-accent-ink); font-size: 12px; font-weight: 700; }
+.ed .ed-empty .ed-empty-first:hover { background: #e0ff88; }
+.ed .ed-empty .ed-empty-first:focus-visible { outline: 2px solid var(--ed-accent); outline-offset: 4px; }
+.ed .ed-publish-access { display: flex; align-items: center; justify-content: flex-end; gap: 14px; margin: -4px 0 24px; }
+.ed .ed-publish-access > span { color: var(--ed-soft); font: 9px 'DM Mono', monospace; letter-spacing: .07em; text-transform: uppercase; }
+.ed .ed-publish-cta { min-height: 42px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 0 16px; border: 1px solid rgba(209,243,106,.34); border-radius: 999px; background: rgba(209,243,106,.055); color: var(--ed-accent); cursor: pointer; font-size: 12px; font-weight: 600; transition: background .16s ease, border-color .16s ease; }
+.ed .ed-publish-cta:hover { border-color: var(--ed-accent); background: rgba(209,243,106,.12); }
+.ed .ed-publish-cta:focus-visible { outline: 2px solid var(--ed-accent); outline-offset: 3px; }
 .ed .ed-footer {
   border-top: 1px solid var(--ed-line); width: min(100% - 64px, 1184px); margin: auto;
   padding: 22px 0 30px; display: flex; justify-content: space-between; color: var(--ed-soft); font-size: 10px;
@@ -198,6 +215,7 @@
   .ed .ed-topbar, .ed .ed-hero, .ed .ed-disclaimer, .ed .ed-main, .ed .ed-footer { width: min(100% - 36px, 600px); }
   .ed .ed-topbar { min-height: 68px; }
   .ed .ed-nav { gap: 16px; }
+  .ed .ed-font-controls { margin-left: 10px; padding-left: 7px; }
   .ed .ed-nav a:not(.ed-add-nav) { display: none; }
   .ed .ed-nav .ed-add-nav { padding: 10px 12px; }
   .ed .ed-hero { padding: 60px 0 42px; display: block; }
@@ -381,7 +399,11 @@
 .ed .ed-access-button { border-radius: 999px; }
 
 @media (max-width: 760px) {
-  .ed .ed-nav { gap: 10px; }
+  .ed .ed-topbar { height: auto; min-height: 0; flex-wrap: wrap; gap: 5px 12px; padding: 10px 0; }
+  .ed .ed-brand { order: 1; }
+  .ed .ed-font-controls { order: 2; margin-left: auto; }
+  .ed .ed-nav { order: 3; width: 100%; justify-content: space-between; gap: 10px; border-top: 1px solid var(--ed-line); padding-top: 5px; }
+  .ed .ed-nav a.ed-nav-link { display: inline-flex; align-items: center; gap: 6px; }
   .ed .ed-nav .ed-access-button { min-height: 40px; padding: 0 13px; font-size: 11px; }
   .ed .ed-access-hint { display: none; }
   .ed .ed-author-nav { gap: 8px; }
@@ -404,5 +426,5 @@
   .ed .ed-brand { gap: 12px; }
   .ed .ed-brand-name { font-size: 16px; }
   .ed .ed-brand-title { font-size: 13px; }
-  .ed .ed-topbar { min-height: 82px; }
+  .ed .ed-topbar { min-height: 0; }
 }

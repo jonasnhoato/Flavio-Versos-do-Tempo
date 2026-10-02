@@ -4,6 +4,8 @@ Blog pessoal de textos com publicação, leitura acessível e compartilhamento.
 
 A maioria dos textos são ideias e divagações, embora também haja poemas. Nos cabeçalhos e nas boas-vindas, usar “texto/textos” em vez de “poema/poesia”.
 
+Manter os controles A− / A+ discretos no alto à direita e a navegação Arquivo, Textos e acesso do autor também do lado direito, conforme solicitado pelo usuário.
+
 ## Run & Operate
 
 - `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
