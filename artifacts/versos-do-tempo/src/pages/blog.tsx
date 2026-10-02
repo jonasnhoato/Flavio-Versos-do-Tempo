@@ -28,7 +28,7 @@ function Row({ poem, index, total, busy, onMove, onCommit, onEdit, onDelete }: R
 
 export default function Blog() {
   const [location, setLocation] = useLocation();
-  useMeta('Flavio Nhoato — Versos do Tempo | Poemas', 'Blog de poesia de Flavio Nhoato: poemas para ler com calma, compartilhar e guardar.', !location.startsWith('/poema/'));
+  useMeta('Flavio Nhoato — Versos do Tempo | Textos', 'Blog de textos de Flavio Nhoato: textos para ler com calma, compartilhar e guardar.', !location.startsWith('/poema/'));
   const search = useSearch();
   const { isSignedIn } = useAuth();
   const list = useListPoems();
@@ -113,7 +113,7 @@ export default function Blog() {
           <div className="ed-feed-header">
             <div className="ed-feed-heading">
               <div className="ed-feed-overline ed-mono">Um acervo para percorrer</div>
-              <h2 id="ed-feed-title">Os poemas</h2>
+              <h2 id="ed-feed-title">Os textos</h2>
               <p className="ed-feed-count">{list.isLoading ? 'Abrindo o caderno…' : `${shown.length} ${shown.length === 1 ? 'texto' : 'textos'} nesta seleção`}</p>
             </div>
             <div className="ed-search-wrap">
@@ -132,11 +132,11 @@ export default function Blog() {
           {reorderErr && <p role="alert" className="mb-4 text-destructive text-sm" data-testid="text-reorder-error">{reorderErr}</p>}
 
         {list.isLoading ? <PoemSkeleton /> : list.isError ? (
-          <Notice role="alert" title="Não foi possível abrir os poemas" action={<button type="button" className={`${pillBtn} bg-primary text-primary-foreground`} onClick={() => list.refetch()} data-testid="button-retry">Tentar de novo</button>}>{errMsg(list.error)}</Notice>
+          <Notice role="alert" title="Não foi possível abrir os textos" action={<button type="button" className={`${pillBtn} bg-primary text-primary-foreground`} onClick={() => list.refetch()} data-testid="button-retry">Tentar de novo</button>}>{errMsg(list.error)}</Notice>
         ) : order.length === 0 ? (
           <Notice title="O caderno ainda está em branco" action={canEdit ? <button type="button" onClick={openNew} className={`${pillBtn} bg-primary text-primary-foreground`}><Plus size={22} />Adicionar o primeiro texto</button> : undefined}>Quando houver poemas, eles aparecerão aqui.</Notice>
         ) : shown.length === 0 ? (
-          <Notice title="Nenhum poema encontrado" action={<button type="button" className={`${pillBtn} border border-input`} onClick={() => { setQ(''); setSel({}); }} data-testid="button-clear-filters">Limpar busca e datas</button>}>Tente outra palavra ou outra data.</Notice>
+          <Notice title="Nenhum texto encontrado" action={<button type="button" className={`${pillBtn} border border-input`} onClick={() => { setQ(''); setSel({}); }} data-testid="button-clear-filters">Limpar busca e datas</button>}>Tente outra palavra ou outra data.</Notice>
         ) : canDrag ? (
           <Reorder.Group axis="y" values={order} onReorder={live} className="p-0 m-0" aria-label="Poemas reordenáveis">
             {order.map((p, i) => <Row key={p.id} poem={p} index={i} total={order.length} busy={act.reorder.isPending} onMove={move} onCommit={commit} onEdit={openEdit} onDelete={(x) => { setDelErr(''); setToDelete(x); }} />)}

@@ -256,7 +256,8 @@
 .ed.ed-reader-modal { position: fixed; z-index: 45; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(820px, calc(100vw - 36px)); max-height: 88dvh; min-height: 0; overflow-y: auto; overscroll-behavior: contain; background: var(--ed-surface); border: 1px solid var(--ed-line); border-radius: 24px; padding: 0 32px 24px; box-shadow: 0 24px 100px #0008; }
 .ed .ed-reader-top { position: sticky; top: 0; z-index: 1; display: flex; justify-content: space-between; align-items: center; gap: 12px; background: var(--ed-surface); padding: 16px 0 10px; }
 .ed .ed-reader-top > span { color: var(--ed-accent); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; }
-.ed .ed-reader-top button { min-width: 44px; min-height: 44px; }
+  .ed .ed-reader-top button { width: 44px; height: 44px; min-width: 44px; min-height: 44px; flex: 0 0 44px; display: inline-flex; align-items: center; justify-content: center; padding: 0; line-height: 0; }
+  .ed .ed-reader-top button svg { display: block; flex: none; margin: 0; }
 .ed .ed-reader-body .ed-poem { padding-top: 24px; }
 .ed .ed-reader-back { min-height: 44px; display: flex; align-items: center; gap: 9px; border: 0; background: transparent; color: var(--ed-accent); font-size: 13px; cursor: pointer; }
 .ed .ed-static-page { width: min(100% - 64px, 780px); margin: 0 auto; padding: 55px 0 85px; }

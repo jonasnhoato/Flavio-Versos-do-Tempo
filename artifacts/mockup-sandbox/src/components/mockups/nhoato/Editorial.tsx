@@ -191,11 +191,11 @@ export function Editorial() {
 
   const archiveTree = (
     <div className="ed-archive-inner">
-      <button className={`ed-archive-all${!selection.year ? ' is-active' : ''}`} onClick={() => setSelection({})}>Todos os poemas <span className="ed-count">{poemList.length}</span></button>
+      <button className={`ed-archive-all${!selection.year ? ' is-active' : ''}`} onClick={() => setSelection({})}>Todos os textos <span className="ed-count">{poemList.length}</span></button>
       {archive.length === 0 && <p className="ed-archive-empty">Ainda sem datas no arquivo.</p>}
       {archive.map((year) => (
         <details className="ed-year" key={year.year} open={selection.year === year.year || undefined}>
-          <summary aria-label={`Ano ${year.year}, ${year.count} poemas`}><span>{year.year}</span><span className="ed-count">{year.count}</span></summary>
+          <summary aria-label={`Ano ${year.year}, ${year.count} textos`}><span>{year.year}</span><span className="ed-count">{year.count}</span></summary>
           <div className="ed-months">
             {year.months.map((month) => (
               <details className="ed-month" key={month.month} open={selection.year === year.year && selection.month === month.month || undefined}>
@@ -247,7 +247,7 @@ export function Editorial() {
         </a>
         <nav className="ed-nav" aria-label="Navegação principal">
           <a href="#arquivo">Arquivo</a>
-          <a href="#poemas">Poemas</a>
+          <a href="#poemas">Textos</a>
           {authorPreview ? (
             <div className="ed-author-nav">
               <span className="ed-author-badge"><span aria-hidden="true" />Modo do autor</span>
@@ -263,11 +263,11 @@ export function Editorial() {
           <div>
             <div className="ed-kicker ed-mono">Um caderno em movimento</div>
             <h1 id="ed-author">Flavio <span>Nhoato</span></h1>
-            <div className="ed-hero-caption ed-mono">VERSOS DO TEMPO <span aria-hidden="true">/</span> POESIA, UM DIA DE CADA VEZ</div>
+            <div className="ed-hero-caption ed-mono">VERSOS DO TEMPO <span aria-hidden="true">/</span> TEXTOS, UM DIA DE CADA VEZ</div>
           </div>
           <div className="ed-intro">
             <div className="ed-intro-label ed-mono">Boas-vindas</div>
-            {introduction.split('\n\n').map((paragraph, index) => <p key={index}>{paragraph}</p>)}
+            {introduction.replaceAll('poesia', 'textos').replaceAll('poemas', 'textos').replaceAll('poema', 'texto').split('\n\n').map((paragraph, index) => <p key={index}>{paragraph}</p>)}
           </div>
         </section>
 
@@ -288,7 +288,7 @@ export function Editorial() {
             <div className="ed-feed-header">
               <div className="ed-feed-heading">
                 <div className="ed-feed-overline ed-mono">Leitura em ordem de chegada</div>
-                <h2 id="ed-feed-title">Os poemas</h2>
+                <h2 id="ed-feed-title">Os textos</h2>
                 <div className="ed-feed-count">{filteredPoems.length} {filteredPoems.length === 1 ? 'texto' : 'textos'} nesta seleção</div>
               </div>
               <label className="ed-search-wrap">
@@ -359,7 +359,7 @@ export function Editorial() {
               </div>
             ) : (
               <div className="ed-empty">
-                <strong>Nenhum poema nesta busca.</strong>
+                <strong>Nenhum texto nesta busca.</strong>
                 Tente outro título ou verso, ou escolha outra data no arquivo.
                 {(search || selection.year) && <div><button onClick={() => { setSearch(''); setSelection({}); }}>Limpar busca e datas</button></div>}
               </div>
@@ -399,7 +399,7 @@ export function Editorial() {
         <div className="ed-modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) setModalOpen(false); }}>
           <section className="ed-modal" role="dialog" aria-modal="true" aria-labelledby="ed-modal-title">
             <div className="ed-modal-head">
-              <div><div className="ed-feed-overline ed-mono">{editingId === null ? 'Novo texto' : 'Editar texto'}</div><h2 id="ed-modal-title">{editingId === null ? 'Adicionar texto' : 'Editar poema'}</h2></div>
+              <div><div className="ed-feed-overline ed-mono">{editingId === null ? 'Novo texto' : 'Editar texto'}</div><h2 id="ed-modal-title">{editingId === null ? 'Adicionar texto' : 'Editar texto'}</h2></div>
               <button className="ed-modal-close" aria-label="Fechar" onClick={() => setModalOpen(false)}><X size={18} /></button>
             </div>
             <form onSubmit={savePoem}>

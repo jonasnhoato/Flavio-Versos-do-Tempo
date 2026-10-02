@@ -23,7 +23,7 @@ export function PoemFormDialog({ open, onOpenChange, poem, pending, error, onSub
         <Dialog.Overlay className={overlay} />
         <Dialog.Content className={`${panel} max-w-2xl`} aria-describedby="poem-form-desc">
           <div className="flex items-start justify-between gap-4">
-            <Dialog.Title className="font-display text-3xl font-semibold text-foreground">{poem ? 'Editar poema' : 'Adicionar texto'}</Dialog.Title>
+            <Dialog.Title className="font-display text-3xl font-semibold text-foreground">{poem ? 'Editar texto' : 'Adicionar texto'}</Dialog.Title>
             <Dialog.Close className="h-12 w-12 grid place-items-center rounded-full border border-input shrink-0" aria-label="Fechar" data-testid="button-close-form"><X /></Dialog.Close>
           </div>
           <Dialog.Description id="poem-form-desc" className="text-sm text-muted-foreground mt-1">Escreva o título e o poema. As quebras de linha serão mantidas.</Dialog.Description>
@@ -56,7 +56,7 @@ export function ConfirmDelete({ poem, onCancel, onConfirm, pending, error }: Del
       <Alert.Portal>
         <Alert.Overlay className={overlay} />
         <Alert.Content className={`${panel} max-w-lg`}>
-          <Alert.Title className="font-display text-3xl text-primary">Excluir este poema?</Alert.Title>
+          <Alert.Title className="font-display text-3xl text-primary">Excluir este texto?</Alert.Title>
           <Alert.Description className="mt-3 text-sm leading-relaxed">
             “{poem?.title}” será removido de vez. Esta ação não pode ser desfeita.
           </Alert.Description>

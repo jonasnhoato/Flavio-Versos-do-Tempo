@@ -19,7 +19,7 @@ export function SiteHeader() {
         </Link>
         <nav className="ed-nav" aria-label="Principal">
           <a href={`${import.meta.env.BASE_URL}#arquivo`} data-testid="link-arquivo">Arquivo</a>
-          <Link href="/" data-testid="link-poemas" aria-current={loc === '/' || loc.startsWith('/poema') ? 'page' : undefined}>Poemas</Link>
+          <Link href="/" data-testid="link-poemas" aria-current={loc === '/' || loc.startsWith('/poema') ? 'page' : undefined}>Textos</Link>
           <Link href="/sobre" data-testid="link-sobre" aria-current={loc === '/sobre' ? 'page' : undefined}>Sobre</Link>
           {isLoaded && (isSignedIn ? <div className="ed-author-nav">
             <Link href="/autor" className="ed-access-button" data-testid="link-author"><LockKeyhole size={15}/>{info.data?.canEdit ? 'Autor' : 'Minha conta'}</Link>

@@ -288,6 +288,8 @@
   gap: 20px; padding-bottom: 21px; border-bottom: 1px solid var(--ed-line);
 }
 .ed .ed-reader-head > div:first-child { min-width: 0; }
+.ed .ed-reader-head .ed-modal-close { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 40px; padding: 0; line-height: 0; }
+.ed .ed-reader-head .ed-modal-close svg { display: block; flex: none; margin: 0; }
 .ed .ed-reader-head h2 {
   margin: 0 0 10px; font-size: clamp(28px, 5vw, 43px); line-height: 1.08;
   font-weight: 600; letter-spacing: -.055em; overflow-wrap: anywhere;

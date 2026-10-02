@@ -6,7 +6,7 @@ export function ArchiveSidebar({ tree, sel, onSelect }: { tree: ArchiveTree; sel
   return (
     <nav aria-label="Arquivo" className="ed-archive-inner">
       <h2 className="ed-archive-title ed-mono">Percorrer por data</h2>
-      <button type="button" className={`ed-archive-all${!sel.year ? ' is-active' : ''}`} onClick={() => onSelect({})} data-testid="button-archive-clear">Todos os poemas <span className="ed-count">{tree.reduce((n, y) => n + y.count, 0)}</span></button>
+      <button type="button" className={`ed-archive-all${!sel.year ? ' is-active' : ''}`} onClick={() => onSelect({})} data-testid="button-archive-clear">Todos os textos <span className="ed-count">{tree.reduce((n, y) => n + y.count, 0)}</span></button>
       {tree.length === 0 && <p className="ed-archive-empty">Ainda sem datas no arquivo.</p>}
       {tree.map((y) => (
         <details key={y.year} open={sel.year === y.year || undefined} className="ed-year">

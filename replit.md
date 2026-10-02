@@ -1,6 +1,8 @@
 # Flavio Nhoato — Versos do Tempo
 
-Blog pessoal de poesia com publicação, leitura acessível e compartilhamento.
+Blog pessoal de textos com publicação, leitura acessível e compartilhamento.
+
+A maioria dos textos são ideias e divagações, embora também haja poemas. Nos cabeçalhos e nas boas-vindas, usar “texto/textos” em vez de “poema/poesia”.
 
 ## Run & Operate
 

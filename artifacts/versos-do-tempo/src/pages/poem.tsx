@@ -22,7 +22,7 @@ export default function PoemPage({ poemId }: { poemId: string }) {
   const close = () => setLoc(isSignedIn ? '/autor' : '/', { replace: true });
   const act = usePoemActions();
   const poem = poemQ.data;
-  useMeta(poem ? `${poem.title} — Flavio Nhoato, Versos do Tempo` : 'Poema — Flavio Nhoato, Versos do Tempo', poem ? poem.content.replace(/\s+/g, ' ').slice(0, 150) : 'Leia um poema de Flavio Nhoato — Versos do Tempo.');
+  useMeta(poem ? `${poem.title} — Flavio Nhoato, Versos do Tempo` : 'Texto — Flavio Nhoato, Versos do Tempo', poem ? poem.content.replace(/\s+/g, ' ').slice(0, 150) : 'Leia um texto de Flavio Nhoato — Versos do Tempo.');
   const [edit, setEdit] = useState(false);
   const [del, setDel] = useState(false);
   const [err, setErr] = useState('');
@@ -32,15 +32,15 @@ export default function PoemPage({ poemId }: { poemId: string }) {
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-40 bg-black/80 backdrop-blur-sm" />
         <Dialog.Content className="ed ed-reader-modal" data-testid="dialog-poem-reader">
-          <Dialog.Title className="sr-only">{poem?.title ?? 'Leitura do poema'}</Dialog.Title>
-          <Dialog.Description className="sr-only">Texto completo do poema. Feche a janela para voltar ao blog.</Dialog.Description>
+          <Dialog.Title className="sr-only">{poem?.title ?? 'Leitura do texto'}</Dialog.Title>
+          <Dialog.Description className="sr-only">Texto completo. Feche a janela para voltar ao blog.</Dialog.Description>
           <div className="ed-reader-top">
             <span className="ed-mono">Leitura completa</span>
             <Dialog.Close className="ed-icon-button" aria-label="Fechar leitura" data-testid="button-close-reader"><X size={20}/></Dialog.Close>
           </div>
           <div className="ed-reader-body">
         {!valid || (poemQ.isError) ? (
-          <Notice role="alert" title="Poema não encontrado" action={<div className="flex gap-3 justify-center flex-wrap">{valid && <button type="button" className={`${pillBtn} border border-input`} onClick={() => poemQ.refetch()} data-testid="button-retry">Tentar de novo</button>}<Link href="/" className={`${pillBtn} bg-primary text-primary-foreground`}>Ver os poemas</Link></div>}>Este endereço não leva a nenhum poema, ou ele foi removido.</Notice>
+          <Notice role="alert" title="Texto não encontrado" action={<div className="flex gap-3 justify-center flex-wrap">{valid && <button type="button" className={`${pillBtn} border border-input`} onClick={() => poemQ.refetch()} data-testid="button-retry">Tentar de novo</button>}<Link href="/" className={`${pillBtn} bg-primary text-primary-foreground`}>Ver os textos</Link></div>}>Este endereço não leva a nenhum texto, ou ele foi removido.</Notice>
         ) : poemQ.isLoading || !poem ? <PoemSkeleton /> : (
           <div className="rise">
             <PoemCard poem={poem} full canEdit={!!info.data?.canEdit} onEdit={() => { setErr(''); setEdit(true); }} onDelete={() => { setErr(''); setDel(true); }} />
