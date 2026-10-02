@@ -248,6 +248,77 @@
   .ed *, .ed *::before, .ed *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
 }
 
+/* Poem previews stay quiet; full-length writing belongs in its own reader. */
+.ed .ed-poem-open-title {
+  display: block; max-width: 100%; padding: 0; border: 0; background: transparent;
+  color: inherit; text-align: left; cursor: pointer;
+}
+.ed .ed-poem-open-title:hover { color: var(--ed-accent); }
+.ed .ed-poem-open-title:focus-visible, .ed .ed-poem-open-excerpt:focus-visible {
+  outline: 2px solid var(--ed-accent); outline-offset: 5px; border-radius: 6px;
+}
+.ed .ed-poem-open-excerpt {
+  display: block; width: calc(100% - 44px); padding: 0; margin: 23px 0 0 44px;
+  border: 0; background: transparent; color: inherit; cursor: pointer; text-align: left;
+}
+.ed .ed-poem-open-excerpt .ed-poem-text {
+  display: -webkit-box; max-height: none; overflow: hidden; margin: 0; padding: 0;
+  -webkit-box-orient: vertical; -webkit-line-clamp: 5; line-clamp: 5;
+  text-overflow: ellipsis; white-space: pre-wrap; overflow-wrap: anywhere;
+}
+.ed .ed-read-more {
+  display: inline-flex; align-items: center; gap: 7px; margin-top: 12px;
+  color: var(--ed-accent); font: 10px 'DM Mono', monospace; letter-spacing: .08em;
+  text-transform: uppercase; transition: gap .18s ease;
+}
+.ed .ed-poem-open-excerpt:hover .ed-read-more { gap: 11px; }
+.ed .ed-reader-backdrop {
+  position: fixed; inset: 0; z-index: 110; display: grid; place-items: center;
+  padding: clamp(12px, 4vw, 40px); background: rgba(4, 6, 5, .88);
+  backdrop-filter: blur(7px); animation: ed-fade .2s both;
+}
+.ed .ed-reader-modal {
+  width: min(100%, 820px); max-height: min(88dvh, 940px); display: flex; flex-direction: column;
+  overflow: hidden; padding: clamp(23px, 5vw, 48px); background: var(--ed-surface);
+  border: 1px solid var(--ed-line); border-radius: 28px;
+  box-shadow: 0 30px 120px rgba(0, 0, 0, .5);
+}
+.ed .ed-reader-head {
+  display: flex; flex: 0 0 auto; justify-content: space-between; align-items: flex-start;
+  gap: 20px; padding-bottom: 21px; border-bottom: 1px solid var(--ed-line);
+}
+.ed .ed-reader-head > div:first-child { min-width: 0; }
+.ed .ed-reader-head h2 {
+  margin: 0 0 10px; font-size: clamp(28px, 5vw, 43px); line-height: 1.08;
+  font-weight: 600; letter-spacing: -.055em; overflow-wrap: anywhere;
+}
+.ed .ed-reader-head .ed-poem-meta { font-size: 10px; }
+.ed .ed-reader-content {
+  min-height: 0; overflow-y: auto; overscroll-behavior: contain;
+  padding: 27px 12px 28px 0; color: #d9dcd5;
+  font: 22px/1.72 'Newsreader', Georgia, serif; white-space: pre-wrap; overflow-wrap: anywhere;
+  scrollbar-color: var(--ed-soft) transparent; scrollbar-width: thin;
+}
+.ed .ed-reader-footer {
+  display: flex; flex: 0 0 auto; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 13px 20px; padding-top: 17px; border-top: 1px solid var(--ed-line);
+}
+.ed .ed-reader-footer .ed-share-actions { align-items: center; }
+.ed .ed-reader-signoff { color: var(--ed-soft); font: 10px 'DM Mono', monospace; }
+@media (max-width: 760px) {
+  .ed .ed-poem-open-excerpt { width: 100%; margin-left: 0; }
+  .ed .ed-reader-backdrop { padding: 12px; }
+  .ed .ed-reader-modal { width: 100%; max-height: 89dvh; padding: 22px 19px 18px; border-radius: 22px; }
+  .ed .ed-reader-head { gap: 10px; padding-bottom: 16px; }
+  .ed .ed-reader-head h2 { font-size: clamp(26px, 7vw, 34px); }
+  .ed .ed-reader-content { padding: 21px 5px 23px 0; font-size: 20px; line-height: 1.72; }
+  .ed .ed-reader-footer { align-items: flex-start; flex-direction: column; gap: 8px; }
+  .ed .ed-reader-footer .ed-icon-button { min-width: 40px; min-height: 40px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ed .ed-reader-backdrop, .ed .ed-read-more { animation: none; transition: none; }
+}
+
 /* Softer, more contemporary controls and a hand-drawn author monogram. */
 .ed .ed-mark {
   width: 44px; height: 44px; flex: 0 0 auto; overflow: visible;

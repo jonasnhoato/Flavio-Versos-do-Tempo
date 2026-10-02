@@ -3,7 +3,8 @@ import { Reorder, useDragControls } from 'framer-motion';
 import { CalendarDays, Plus, Search, X } from 'lucide-react';
 import { useLocation, useSearch } from 'wouter';
 import { useAuth } from '@clerk/react';
-import { useGetBlogInfo, useListPoems, type Poem } from '@workspace/api-client-react';
+import { useListPoems, type Poem } from '@workspace/api-client-react';
+import { useAuthorAccess } from '@/hooks/use-author-access';
 import { PoemCard } from '@/components/poem-card';
 import { BlogIntroduction } from '@/components/blog-introduction';
 import { ConfirmDelete, PoemFormDialog } from '@/components/poem-dialogs';
@@ -26,12 +27,12 @@ function Row({ poem, index, total, busy, onMove, onCommit, onEdit, onDelete }: R
 }
 
 export default function Blog() {
-  useMeta('Flavio Nhoato — Versos do Tempo | Poemas', 'Blog de poesia de Flavio Nhoato: poemas para ler com calma, compartilhar e guardar.');
+  const [location, setLocation] = useLocation();
+  useMeta('Flavio Nhoato — Versos do Tempo | Poemas', 'Blog de poesia de Flavio Nhoato: poemas para ler com calma, compartilhar e guardar.', !location.startsWith('/poema/'));
   const search = useSearch();
-  const [, setLocation] = useLocation();
   const { isSignedIn } = useAuth();
   const list = useListPoems();
-  const info = useGetBlogInfo();
+  const info = useAuthorAccess();
   const act = usePoemActions();
   const canEdit = !!info.data?.canEdit;
   const [order, setOrder] = useState<Poem[]>([]);

@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'wouter';
-import { useGetBlogInfo } from '@workspace/api-client-react';
+import { useAuthorAccess } from '@/hooks/use-author-access';
 import { LockKeyhole, LogOut, Minus, Plus } from 'lucide-react';
 import { useAuth, useClerk } from '@clerk/react';
 import { AuthorMonogram } from '@/components/author-monogram';
@@ -7,7 +7,7 @@ import { useFontSize } from '@/hooks/use-font-size';
 
 export function SiteHeader() {
   const [loc] = useLocation();
-  const info = useGetBlogInfo();
+  const info = useAuthorAccess();
   const { isLoaded, isSignedIn } = useAuth();
   const { signOut } = useClerk();
   const f = useFontSize();

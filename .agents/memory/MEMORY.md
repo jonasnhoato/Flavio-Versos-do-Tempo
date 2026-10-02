@@ -1,1 +1,2 @@
 - [Publicação do autor](author-access.md) — escrita exclusiva do autor, inclusive na prévia; leitura e compartilhamento públicos.
+- [Permissões ao trocar de conta](authorization-ui.md) — limpar cache não garante retirar permissões visuais; acompanhar a identidade e o login.

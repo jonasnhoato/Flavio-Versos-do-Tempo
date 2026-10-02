@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { FormEvent } from 'react';
 import { ArrowDown, ArrowUp, CalendarDays, Check, Copy, GripVertical, LockKeyhole, LogIn, Mail, Plus, Search, X } from 'lucide-react';
 import { FaFacebookF, FaWhatsapp } from 'react-icons/fa';
@@ -16,6 +16,7 @@ const dateKey = (value: string) => {
 };
 const formatDate = (value: string) =>
   new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }).format(new Date(value));
+const poemUrl = (poem: Poem) => `${window.location.origin}${window.location.pathname}#poema-${poem.id}`;
 
 const blankDraft = (): Draft => ({ title: '', content: '', date: dateKey(new Date().toISOString()) });
 
@@ -24,6 +25,7 @@ export function Editorial() {
   const [search, setSearch] = useState('');
   const [selection, setSelection] = useState<ArchiveSelection>({});
   const [modalOpen, setModalOpen] = useState(false);
+  const [readingPoem, setReadingPoem] = useState<Poem | null>(null);
   const [loginOpen, setLoginOpen] = useState(() => new URLSearchParams(window.location.search).get('acesso') === 'autor');
   const [loginError, setLoginError] = useState('');
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -31,6 +33,48 @@ export function Editorial() {
   const [draggingId, setDraggingId] = useState<number | null>(null);
   const [draft, setDraft] = useState<Draft>(blankDraft);
   const [toast, setToast] = useState('');
+
+  useEffect(() => {
+    const syncReaderToAddress = () => {
+      const match = window.location.hash.match(/^#poema-(\d+)$/);
+      const sharedPoem = match ? poemList.find((poem) => poem.id === Number(match[1])) : undefined;
+      setReadingPoem(sharedPoem ?? null);
+    };
+    syncReaderToAddress();
+    window.addEventListener('popstate', syncReaderToAddress);
+    return () => window.removeEventListener('popstate', syncReaderToAddress);
+  }, [poemList]);
+
+  useEffect(() => {
+    if (!readingPoem) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') closeReader();
+    };
+    window.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [readingPoem]);
+
+  const openReader = (poem: Poem) => {
+    if (window.location.hash !== `#poema-${poem.id}`) {
+      window.history.pushState({ poemOverlay: true }, '', `#poema-${poem.id}`);
+    }
+    setReadingPoem(poem);
+  };
+
+  const closeReader = () => {
+    if (!readingPoem) return;
+    if (window.history.state?.poemOverlay && window.location.hash === `#poema-${readingPoem.id}`) {
+      window.history.back();
+      return;
+    }
+    window.history.replaceState(window.history.state, '', `${window.location.pathname}${window.location.search}`);
+    setReadingPoem(null);
+  };
 
   const archive = useMemo(() => {
     const years = new Map<string, Map<string, Map<string, number>>>();
@@ -136,7 +180,7 @@ export function Editorial() {
   };
 
   const copyLink = async (poem: Poem) => {
-    const url = `${window.location.origin}${window.location.pathname}#poema-${poem.id}`;
+    const url = poemUrl(poem);
     try {
       await navigator.clipboard.writeText(url);
       notify('Link copiado');
@@ -258,8 +302,8 @@ export function Editorial() {
                 {filteredPoems.map((poem, index) => {
                   const overallIndex = poemList.findIndex((item) => item.id === poem.id);
                   const slug = encodeURIComponent(poem.title);
-                  const encodedUrl = encodeURIComponent(`${window.location.origin}${window.location.pathname}#poema-${poem.id}`);
-                  const encodedText = encodeURIComponent(`${poem.title} — ${window.location.origin}${window.location.pathname}#poema-${poem.id}`);
+                  const encodedUrl = encodeURIComponent(poemUrl(poem));
+                  const encodedText = encodeURIComponent(`${poem.title} — ${poemUrl(poem)}`);
                   return (
                     <article
                       className={`ed-poem${draggingId === poem.id ? ' ed-is-dragging' : ''}`}
@@ -286,11 +330,14 @@ export function Editorial() {
                         {authorPreview && <button className="ed-drag-handle" aria-label={`Arrastar ${poem.title}`} title="Segure e arraste para reorganizar"><GripVertical size={17} /></button>}
                         <div className="ed-poem-index">{String(index + 1).padStart(2, '0')}</div>
                         <div className="ed-poem-main">
-                          <h3>{poem.title}</h3>
+                          <button type="button" className="ed-poem-open-title" onClick={() => openReader(poem)} aria-label={`Ler ${poem.title} completo`}><h3>{poem.title}</h3></button>
                           <div className="ed-poem-meta"><time dateTime={poem.createdAt}>{formatDate(poem.createdAt)}</time>{poem.isExample && <span className="ed-example">Texto de demonstração</span>}</div>
                         </div>
                       </div>
-                      <div className="ed-poem-text">{poem.content}</div>
+                      <button type="button" className="ed-poem-open-excerpt" onClick={() => openReader(poem)} aria-label={`Abrir o texto completo: ${poem.title}`}>
+                        <span className="ed-poem-text">{poem.content}</span>
+                        <span className="ed-read-more">Continuar leitura <ArrowDown size={14} aria-hidden="true" /></span>
+                      </button>
                       <div className="ed-poem-actions">
                         <div className="ed-share-actions">
                           <span className="ed-share-label">Compartilhar</span>
@@ -321,6 +368,32 @@ export function Editorial() {
         </div>
       </main>
       <footer className="ed-footer"><span>Flavio Nhoato <span aria-hidden="true">·</span> Versos do Tempo</span><span className="ed-mono">UM ACERVO QUE CRESCE A CADA PÁGINA</span></footer>
+
+      {readingPoem && (
+        <div className="ed-reader-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) closeReader(); }}>
+          <section className="ed-reader-modal" role="dialog" aria-modal="true" aria-labelledby="ed-reader-title" aria-describedby="ed-reader-poem">
+            <header className="ed-reader-head">
+              <div>
+                <div className="ed-feed-overline ed-mono">Leitura integral</div>
+                <h2 id="ed-reader-title">{readingPoem.title}</h2>
+                <div className="ed-poem-meta"><time dateTime={readingPoem.createdAt}>{formatDate(readingPoem.createdAt)}</time>{readingPoem.isExample && <span className="ed-example">Texto de demonstração</span>}</div>
+              </div>
+              <button type="button" className="ed-modal-close" aria-label="Fechar leitura integral" autoFocus onClick={closeReader}><X size={18} /></button>
+            </header>
+            <div className="ed-reader-content" id="ed-reader-poem">{readingPoem.content}</div>
+            <footer className="ed-reader-footer">
+              <div className="ed-share-actions">
+                <span className="ed-share-label">Compartilhar esta leitura</span>
+                <a className="ed-icon-button ed-social-facebook" aria-label={`Compartilhar ${readingPoem.title} no Facebook`} title="Facebook" href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(poemUrl(readingPoem))}`} target="_blank" rel="noreferrer"><FaFacebookF size={15} aria-hidden="true" /></a>
+                <a className="ed-icon-button ed-social-whatsapp" aria-label={`Compartilhar ${readingPoem.title} no WhatsApp`} title="WhatsApp" href={`https://wa.me/?text=${encodeURIComponent(`${readingPoem.title} — ${poemUrl(readingPoem)}`)}`} target="_blank" rel="noreferrer"><FaWhatsapp size={16} aria-hidden="true" /></a>
+                <a className="ed-icon-button" aria-label={`Enviar ${readingPoem.title} por e-mail`} title="E-mail" href={`mailto:?subject=${encodeURIComponent(readingPoem.title)}&body=${encodeURIComponent(`${readingPoem.title} — ${poemUrl(readingPoem)}`)}`}><Mail size={15} /></a>
+                <button type="button" className="ed-icon-button" aria-label={`Copiar link de ${readingPoem.title}`} title="Copiar link" onClick={() => void copyLink(readingPoem)}><Copy size={14} /></button>
+              </div>
+              <span className="ed-reader-signoff">Flavio Nhoato <span aria-hidden="true">·</span> Versos do Tempo</span>
+            </footer>
+          </section>
+        </div>
+      )}
 
       {modalOpen && (
         <div className="ed-modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) setModalOpen(false); }}>

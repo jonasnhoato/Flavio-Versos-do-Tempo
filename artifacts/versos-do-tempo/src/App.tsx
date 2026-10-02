@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
@@ -10,35 +10,43 @@ import About from '@/pages/about';
 import NotFound from '@/pages/not-found';
 import { AuthProvider } from '@/components/auth-provider';
 import { AuthorSignIn, AuthorSignUp } from '@/pages/author-sign-in';
-import { Show, useAuth } from '@clerk/react';
+import { useAuth } from '@clerk/react';
 import {
   Route,
   Switch,
   useLocation,
+  useRoute,
   Router as WouterRouter,
-  Redirect,
 } from 'wouter';
 
 const queryClient = new QueryClient();
 
-function PublicHome() {
-  const { isSignedIn } = useAuth();
-  return isSignedIn ? <Redirect to="/autor" /> : <Blog />;
+function BlogHome() {
+  const { isLoaded, isSignedIn } = useAuth();
+  const [location, setLocation] = useLocation();
+  useEffect(() => {
+    if (isLoaded && isSignedIn && location === '/') setLocation('/autor', { replace: true });
+    if (isLoaded && !isSignedIn && location === '/autor') setLocation('/', { replace: true });
+  }, [isLoaded, isSignedIn, location, setLocation]);
+  return <Blog />;
 }
 
 function Router() {
+  const [location] = useLocation();
+  const [reading, params] = useRoute<{ id: string }>('/poema/:id');
+  const blogRoute = location === '/' || location === '/autor' || reading;
   return (
     <Layout>
       <RoutedErrorBoundary>
-        <Switch>
-          <Route path="/" component={PublicHome} />
-          <Route path="/autor"><Show when="signed-in"><Blog/></Show><Show when="signed-out"><Redirect to="/"/></Show></Route>
+        {blogRoute ? <>
+          <BlogHome />
+          {reading && params && <PoemPage poemId={params.id} />}
+        </> : <Switch>
           <Route path="/sign-in/*?" component={AuthorSignIn} />
           <Route path="/sign-up/*?" component={AuthorSignUp} />
-          <Route path="/poema/:id" component={PoemPage} />
           <Route path="/sobre" component={About} />
           <Route component={NotFound} />
-        </Switch>
+        </Switch>}
       </RoutedErrorBoundary>
     </Layout>
   );

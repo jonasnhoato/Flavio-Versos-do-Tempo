@@ -45,6 +45,7 @@ _Describe the high-level user-facing capabilities of this app once they exist._
 ## Gotchas
 
 - Exigir acesso verificado e autorização exclusiva do autor para qualquer escrita, inclusive na prévia. Visitantes e contas sem autorização apenas leem e compartilham.
+- O autor tem textos muito longos: mostrar somente o começo na lista e abrir a leitura completa em janela sobreposta. Os links compartilhados devem abrir diretamente essa janela do texto correspondente.
 - Os três textos iniciais são demonstrações, não obras de Flávio. Não remover essa identificação nem atribuir os exemplos ao autor.
 
 ## Pointers

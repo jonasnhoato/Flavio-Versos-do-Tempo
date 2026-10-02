@@ -1,10 +1,10 @@
 import { Link } from 'wouter';
-import { useGetBlogInfo } from '@workspace/api-client-react';
+import { useAuthorAccess } from '@/hooks/use-author-access';
 import { useMeta } from '@/hooks/use-meta';
 
 export default function About() {
   useMeta('Sobre — Flavio Nhoato, Versos do Tempo', 'Sobre este projeto: um blog de poesia pensado para leitura confortável, sem biografia inventada.');
-  const info = useGetBlogInfo();
+  const info = useAuthorAccess();
   return (
     <div className="ed-static-page rise">
       <h1 className="font-display text-5xl font-semibold">Sobre</h1>

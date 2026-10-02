@@ -1,6 +1,6 @@
 import type { PointerEvent } from 'react';
 import { Link } from 'wouter';
-import { ArrowDown, ArrowUp, GripVertical, Pencil, Trash2 } from 'lucide-react';
+import { ArrowDown, ArrowRight, ArrowUp, GripVertical, Pencil, Trash2 } from 'lucide-react';
 import type { Poem } from '@workspace/api-client-react';
 import { ShareBar } from '@/components/share-bar';
 import { formatDate } from '@/lib/poems';
@@ -26,7 +26,11 @@ export function PoemCard({ poem, index, full, canEdit, onEdit, onDelete, reorder
           </p>
         </div>
       </header>
-      <div className="ed-poem-text" style={{ fontSize: 'var(--poem-size)' }} data-testid={`text-poem-${poem.id}`}>{poem.content}</div>
+      {full ? <div className="ed-poem-text" style={{ fontSize: 'var(--poem-size)' }} data-testid={`text-poem-${poem.id}`}>{poem.content}</div> :
+        <Link href={`/poema/${poem.id}`} className="ed-poem-open-excerpt" aria-label={`Ler ${poem.title} completo`} data-testid={`link-read-poem-${poem.id}`}>
+          <span className="ed-poem-text ed-poem-excerpt" style={{ fontSize: 'var(--poem-size)' }} data-testid={`text-poem-${poem.id}`}>{poem.content.split('\n').slice(0, 5).join('\n').slice(0, 600)}</span>
+          <span className="ed-read-more">Ler texto completo <ArrowRight size={14} aria-hidden="true"/></span>
+        </Link>}
       <div className="ed-poem-actions">
         <ShareBar poem={poem} />
         {canEdit && <div className="ed-edit-actions" aria-label={`Ações para ${poem.title}`}>
