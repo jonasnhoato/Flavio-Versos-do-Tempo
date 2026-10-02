@@ -18,14 +18,14 @@ export default function PoemPage() {
   const info = useGetBlogInfo();
   const act = usePoemActions();
   const poem = poemQ.data;
-  useMeta(poem ? `${poem.title} — Flávio, Versos do Tempo` : 'Poema — Flávio, Versos do Tempo', poem ? poem.content.replace(/\s+/g, ' ').slice(0, 150) : 'Leia um poema de Flávio — Versos do Tempo.');
+  useMeta(poem ? `${poem.title} — Flavio Nhoato, Versos do Tempo` : 'Poema — Flavio Nhoato, Versos do Tempo', poem ? poem.content.replace(/\s+/g, ' ').slice(0, 150) : 'Leia um poema de Flavio Nhoato — Versos do Tempo.');
   const [edit, setEdit] = useState(false);
   const [del, setDel] = useState(false);
   const [err, setErr] = useState('');
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8">
-      <Link href="/" className="inline-flex items-center gap-2 min-h-12 text-lg text-primary hover:underline" data-testid="link-back"><ArrowLeft size={20} />Todos os poemas</Link>
+    <div className="ed-static-page">
+      <Link href="/" className="inline-flex items-center gap-2 min-h-11 text-sm text-primary hover:underline" data-testid="link-back"><ArrowLeft size={16} />Todos os poemas</Link>
       <div className="mt-4">
         {!valid || (poemQ.isError) ? (
           <Notice role="alert" title="Poema não encontrado" action={<div className="flex gap-3 justify-center flex-wrap">{valid && <button type="button" className={`${pillBtn} border border-input`} onClick={() => poemQ.refetch()} data-testid="button-retry">Tentar de novo</button>}<Link href="/" className={`${pillBtn} bg-primary text-primary-foreground`}>Ver os poemas</Link></div>}>Este endereço não leva a nenhum poema, ou ele foi removido.</Notice>
@@ -35,9 +35,9 @@ export default function PoemPage() {
           </div>
         )}
       </div>
-      <PoemFormDialog open={edit} onOpenChange={setEdit} poem={poem} pending={act.update.isPending} error={err}
+      <PoemFormDialog open={!!info.data?.canEdit && edit} onOpenChange={setEdit} poem={poem} pending={act.update.isPending} error={err}
         onSubmit={(data) => act.update.mutate({ id, data }, { onSuccess: () => setEdit(false), onError: (e) => setErr(errMsg(e)) })} />
-      <ConfirmDelete poem={del ? poem ?? null : null} onCancel={() => setDel(false)} pending={act.remove.isPending} error={err}
+      <ConfirmDelete poem={del && info.data?.canEdit ? poem ?? null : null} onCancel={() => setDel(false)} pending={act.remove.isPending} error={err}
         onConfirm={() => act.remove.mutate({ id }, { onSuccess: () => { setDel(false); setLoc('/'); }, onError: (e) => setErr(errMsg(e)) })} />
     </div>
   );

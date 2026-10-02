@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Figtree:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap');
+@layer theme, base, clerk, components, utilities;
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @plugin "@tailwindcss/typography";
@@ -67,47 +68,47 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
-/* Tinta e papel: noite azul-tinta, pergaminho, ouro velho */
+/* Editorial: preto, tipografia contemporânea e verde-lima. */
 :root {
   --button-outline: rgba(255,255,255,0.1);
   --badge-outline: rgba(255,255,255,0.05);
   --opaque-button-border-intensity: 9;
   --elevate-1: rgba(255,255,255,0.04);
   --elevate-2: rgba(255,255,255,0.09);
-  --background: 218 32% 9%;
-  --foreground: 40 38% 89%;
-  --border: 218 20% 22%;
-  --card: 218 28% 12%;
-  --card-foreground: 40 38% 89%;
-  --card-border: 218 20% 20%;
-  --sidebar: 218 30% 10%;
-  --sidebar-foreground: 40 38% 89%;
-  --sidebar-border: 218 20% 20%;
-  --sidebar-primary: 38 62% 64%;
-  --sidebar-primary-foreground: 218 32% 9%;
-  --sidebar-accent: 218 24% 16%;
-  --sidebar-accent-foreground: 40 38% 89%;
-  --sidebar-ring: 38 62% 64%;
-  --popover: 218 28% 13%;
-  --popover-foreground: 40 38% 89%;
-  --popover-border: 218 20% 24%;
-  --primary: 38 62% 64%;
-  --primary-foreground: 218 40% 8%;
-  --secondary: 218 22% 19%;
-  --secondary-foreground: 40 38% 89%;
-  --muted: 218 22% 16%;
-  --muted-foreground: 40 15% 70%;
-  --accent: 350 38% 32%;
-  --accent-foreground: 40 38% 92%;
+  --background: 150 10% 4%;
+  --foreground: 60 21% 93%;
+  --border: 137 7% 20%;
+  --card: 140 8% 7%;
+  --card-foreground: 60 21% 93%;
+  --card-border: 137 7% 20%;
+  --sidebar: 140 8% 7%;
+  --sidebar-foreground: 60 21% 93%;
+  --sidebar-border: 137 7% 20%;
+  --sidebar-primary: 75 85% 68%;
+  --sidebar-primary-foreground: 80 32% 7%;
+  --sidebar-accent: 140 8% 10%;
+  --sidebar-accent-foreground: 60 21% 93%;
+  --sidebar-ring: 75 85% 68%;
+  --popover: 140 8% 7%;
+  --popover-foreground: 60 21% 93%;
+  --popover-border: 137 7% 20%;
+  --primary: 75 85% 68%;
+  --primary-foreground: 80 32% 7%;
+  --secondary: 140 8% 10%;
+  --secondary-foreground: 60 21% 93%;
+  --muted: 140 8% 10%;
+  --muted-foreground: 113 4% 63%;
+  --accent: 75 85% 68%;
+  --accent-foreground: 80 32% 7%;
   --destructive: 355 62% 52%;
   --destructive-foreground: 0 0% 98%;
-  --input: 218 18% 34%;
-  --ring: 38 62% 64%;
+  --input: 137 7% 25%;
+  --ring: 75 85% 68%;
   --chart-1: 38 62% 64%; --chart-2: 350 38% 50%; --chart-3: 195 35% 50%; --chart-4: 150 25% 50%; --chart-5: 270 25% 60%;
-  --app-font-sans: 'Figtree', sans-serif;
-  --app-font-serif: 'Lora', Georgia, serif;
-  --app-font-mono: Menlo, monospace;
-  --radius: 0.75rem;
+  --app-font-sans: 'Manrope', sans-serif;
+  --app-font-serif: 'Newsreader', Georgia, serif;
+  --app-font-mono: 'DM Mono', monospace;
+  --radius: 0.25rem;
   --tracking-normal: 0em;
   --spacing: 0.25rem;
   --poem-size: 1.375rem;
@@ -242,12 +243,14 @@
   }
 }
 
-.font-display { font-family: 'Cormorant Garamond', Georgia, serif; }
-.font-poem { font-family: 'Lora', Georgia, serif; }
-body { font-size: 1.125rem; background-image: radial-gradient(ellipse at 50% -10%, hsl(38 50% 40% / 0.14), transparent 55%); background-attachment: fixed; }
+.font-display { font-family: 'Manrope', sans-serif; letter-spacing: -.045em; }
+.font-poem { font-family: 'Newsreader', Georgia, serif; }
+body { font-size: .9375rem; }
 :focus-visible { outline: 3px solid hsl(var(--ring)); outline-offset: 3px; }
 @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 .rise { animation: rise .6s ease both; }
 @keyframes pulse-soft { 50% { opacity: .45; } }
 .skeleton { background: hsl(var(--muted)); border-radius: .75rem; animation: pulse-soft 1.6s ease infinite; }
 @media (prefers-reduced-motion: reduce) { .rise, .skeleton { animation: none; } }
+.cl-formFieldInput::placeholder { color: #9da49c; opacity: 1; }
+.ed .cl-formButtonPrimary, .ed .cl-formButtonPrimary * { color: #15190d; }

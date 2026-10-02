@@ -1,14 +1,17 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Reorder, useDragControls } from 'framer-motion';
-import { Plus, Search, X } from 'lucide-react';
+import { CalendarDays, Plus, Search, X } from 'lucide-react';
+import { useLocation, useSearch } from 'wouter';
+import { useAuth } from '@clerk/react';
 import { useGetBlogInfo, useListPoems, type Poem } from '@workspace/api-client-react';
 import { PoemCard } from '@/components/poem-card';
+import { BlogIntroduction } from '@/components/blog-introduction';
 import { ConfirmDelete, PoemFormDialog } from '@/components/poem-dialogs';
 import { ArchiveSidebar, type ArchiveSel } from '@/components/archive-sidebar';
 import { Notice, PoemSkeleton, pillBtn } from '@/components/states';
 import { usePoemActions } from '@/hooks/use-poem-actions';
 import { useMeta } from '@/hooks/use-meta';
-import { buildArchive, dateKey, errMsg, norm } from '@/lib/poems';
+import { buildArchive, dateKey, errMsg, norm, MONTHS } from '@/lib/poems';
 
 type RowProps = { poem: Poem; index: number; total: number; busy: boolean; onMove: (i: number, d: -1 | 1) => void; onCommit: () => void; onEdit: (p: Poem) => void; onDelete: (p: Poem) => void };
 
@@ -16,14 +19,17 @@ function Row({ poem, index, total, busy, onMove, onCommit, onEdit, onDelete }: R
   const controls = useDragControls();
   return (
     <Reorder.Item value={poem} dragListener={false} dragControls={controls} onDragEnd={onCommit} className="list-none" whileDrag={{ scale: 1.015, zIndex: 10 }}>
-      <PoemCard poem={poem} canEdit onEdit={() => onEdit(poem)} onDelete={() => onDelete(poem)}
+      <PoemCard poem={poem} index={index} canEdit onEdit={() => onEdit(poem)} onDelete={() => onDelete(poem)}
         reorder={{ onUp: () => onMove(index, -1), onDown: () => onMove(index, 1), disableUp: index === 0, disableDown: index === total - 1, busy, onHandleDown: (e) => controls.start(e) }} />
     </Reorder.Item>
   );
 }
 
 export default function Blog() {
-  useMeta('Flávio — Versos do Tempo | Poemas', 'Blog de poesia de Flávio: poemas para ler com calma, compartilhar e guardar.');
+  useMeta('Flavio Nhoato — Versos do Tempo | Poemas', 'Blog de poesia de Flavio Nhoato: poemas para ler com calma, compartilhar e guardar.');
+  const search = useSearch();
+  const [, setLocation] = useLocation();
+  const { isSignedIn } = useAuth();
   const list = useListPoems();
   const info = useGetBlogInfo();
   const act = usePoemActions();
@@ -38,6 +44,13 @@ export default function Blog() {
   const [formErr, setFormErr] = useState('');
   const [delErr, setDelErr] = useState('');
   const [reorderErr, setReorderErr] = useState('');
+
+  useEffect(() => {
+    if (canEdit && new URLSearchParams(search).get('novo') === '1') {
+      setEditing(null); setFormErr(''); setFormOpen(true);
+      setLocation('/autor', { replace: true });
+    }
+  }, [search, canEdit, setLocation]);
 
   useEffect(() => {
     if (list.data) { const s = [...list.data].sort((a, b) => a.position - b.position); setOrder(s); orderRef.current = s; }
@@ -74,7 +87,7 @@ export default function Blog() {
   const openEdit = (p: Poem) => { setEditing(p); setFormErr(''); setFormOpen(true); };
   const submit = (data: { title: string; content: string }) => {
     setFormErr('');
-    const opts = { onSuccess: () => setFormOpen(false), onError: (e: unknown) => setFormErr(errMsg(e)) };
+    const opts = { onSuccess: () => { setFormOpen(false); if (!editing) { setQ(''); setSel({}); } }, onError: (e: unknown) => setFormErr(errMsg(e)) };
     if (editing) act.update.mutate({ id: editing.id, data }, opts); else act.create.mutate({ data }, opts);
   };
   const confirmDel = () => {
@@ -84,38 +97,38 @@ export default function Blog() {
   };
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 grid lg:grid-cols-[17rem_1fr] gap-8">
-      <aside className="lg:sticky lg:top-28 self-start order-1">
-        <div className="hidden lg:block"><ArchiveSidebar tree={tree} sel={sel} onSelect={setSel} /></div>
-        <details className="lg:hidden rounded-xl border border-border bg-sidebar p-4">
-          <summary className="cursor-pointer text-lg text-primary">Buscar poemas por data{sel.year ? ' · filtro ativo' : ''}</summary>
-          <div className="mt-3"><ArchiveSidebar tree={tree} sel={sel} onSelect={setSel} /></div>
-        </details>
-      </aside>
-      <section className="order-2 min-w-0">
-        <div className="rise mb-6">
-          <h1 className="font-display text-5xl sm:text-6xl text-foreground leading-none">Poemas</h1>
-          <p className="mt-2 text-lg text-muted-foreground">{info.data ? `${info.data.total} ${info.data.total === 1 ? 'poema' : 'poemas'} no caderno` : 'Abrindo o caderno…'}</p>
-        </div>
-        <div className="flex flex-wrap gap-3 mb-4">
-          <div className="relative flex-1 min-w-[14rem]">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={22} />
-            <label htmlFor="busca" className="sr-only">Buscar poemas</label>
-            <input id="busca" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar por título ou verso" data-testid="input-search"
-              className="w-full min-h-12 rounded-full bg-card border-2 border-input pl-12 pr-12 text-lg focus:border-primary" />
-            {q && <button type="button" onClick={() => setQ('')} aria-label="Limpar busca" className="absolute right-2 top-1/2 -translate-y-1/2 h-10 w-10 grid place-items-center" data-testid="button-clear-search"><X size={20} /></button>}
+    <>
+      <BlogIntroduction />
+      {order.some(p => p.isExample) && <p className="ed-disclaimer" data-testid="text-demo-note"><span className="ed-demo-dot" aria-hidden="true" />Os poemas marcados como “Texto de demonstração” são exemplos e não são de autoria de Flavio.</p>}
+      <div className="ed-main">
+        <aside className="ed-archive-wrap" id="arquivo">
+          <div className="ed-archive"><ArchiveSidebar tree={tree} sel={sel} onSelect={setSel} /></div>
+          <details className="ed-mobile-archive" open={!!sel.year || undefined}>
+            <summary><span><CalendarDays size={14} aria-hidden="true" />Arquivo de datas{sel.year ? ' · filtro ativo' : ''}</span><span className="ed-count">{info.data?.total ?? '…'} textos</span></summary>
+            <ArchiveSidebar tree={tree} sel={sel} onSelect={setSel} />
+          </details>
+        </aside>
+        <section className="ed-feed" id="poemas" aria-labelledby="ed-feed-title">
+          <div className="ed-feed-header">
+            <div className="ed-feed-heading">
+              <div className="ed-feed-overline ed-mono">Um acervo para percorrer</div>
+              <h2 id="ed-feed-title">Os poemas</h2>
+              <p className="ed-feed-count">{list.isLoading ? 'Abrindo o caderno…' : `${shown.length} ${shown.length === 1 ? 'texto' : 'textos'} nesta seleção`}</p>
+            </div>
+            <div className="ed-search-wrap">
+              <Search className="ed-search-icon" size={16} aria-hidden="true" />
+              <label htmlFor="busca" className="sr-only">Buscar poemas</label>
+              <input id="busca" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar título ou verso" data-testid="input-search" className="ed-search" />
+              {q && <button type="button" onClick={() => setQ('')} aria-label="Limpar busca" className="ed-search-clear" data-testid="button-clear-search"><X size={16} /></button>}
+            </div>
           </div>
-          {canEdit && <button type="button" onClick={openNew} className={`${pillBtn} bg-primary text-primary-foreground`} data-testid="button-add"><Plus size={22} />Adicionar texto</button>}
-        </div>
-        {info.data && !canEdit && (
-          <p className="mb-4 text-base text-muted-foreground rounded-lg border border-border px-4 py-3" data-testid="text-readonly">
-            Somente leitura: a edição ainda não está liberada nesta versão publicada. Ela só será ativada quando o acesso protegido do autor for configurado.
-          </p>
-        )}
-        {canEdit && <p className="mb-4 text-sm text-muted-foreground/80" data-testid="text-dev-note">Modo de desenvolvimento: a edição está ativa só durante o desenvolvimento.</p>}
-        {canDrag && <p className="mb-4 text-base text-muted-foreground">Para mudar a ordem, segure a alça e arraste, ou use as setas.</p>}
-        {canEdit && filtering && order.length > 1 && <p className="mb-4 text-base text-primary">A ordem só pode ser mudada sem busca ou filtro de data.</p>}
-        {reorderErr && <p role="alert" className="mb-4 text-destructive text-lg" data-testid="text-reorder-error">{reorderErr}</p>}
+          {isSignedIn && info.data && !canEdit && <p className="ed-tip" data-testid="text-readonly">Esta conta não tem autorização de autor. A leitura e o compartilhamento continuam disponíveis.</p>}
+          {info.isError && <p role="alert" className="ed-tip text-destructive">Não foi possível verificar o acesso às ferramentas. <button type="button" className="underline" onClick={() => info.refetch()}>Tentar novamente</button></p>}
+          {canEdit && <div className="ed-author-tools"><button type="button" className="ed-add-nav" onClick={openNew} data-testid="button-add"><Plus size={15}/>Adicionar texto</button><span className="ed-author-badge"><span aria-hidden="true"/>Modo do autor</span></div>}
+          {canDrag && <p className="ed-tip">Para mudar a ordem, segure a alça e arraste, ou use as setas.</p>}
+          {filtering && <div className="ed-filter-note"><span>{sel.year ? `Arquivo: ${[sel.day, sel.month && MONTHS[Number(sel.month) - 1], sel.year].filter(Boolean).join(' · ')}` : 'Busca ativa'}</span><button type="button" className="ed-small-action" onClick={() => { setQ(''); setSel({}); }} data-testid="button-clear-filters">Limpar busca e datas <X size={12}/></button></div>}
+          {canEdit && filtering && order.length > 1 && <p className="ed-tip">A ordem só pode ser mudada sem busca ou filtro de data.</p>}
+          {reorderErr && <p role="alert" className="mb-4 text-destructive text-sm" data-testid="text-reorder-error">{reorderErr}</p>}
 
         {list.isLoading ? <PoemSkeleton /> : list.isError ? (
           <Notice role="alert" title="Não foi possível abrir os poemas" action={<button type="button" className={`${pillBtn} bg-primary text-primary-foreground`} onClick={() => list.refetch()} data-testid="button-retry">Tentar de novo</button>}>{errMsg(list.error)}</Notice>
@@ -124,17 +137,18 @@ export default function Blog() {
         ) : shown.length === 0 ? (
           <Notice title="Nenhum poema encontrado" action={<button type="button" className={`${pillBtn} border border-input`} onClick={() => { setQ(''); setSel({}); }} data-testid="button-clear-filters">Limpar busca e datas</button>}>Tente outra palavra ou outra data.</Notice>
         ) : canDrag ? (
-          <Reorder.Group axis="y" values={order} onReorder={live} className="space-y-6 p-0 m-0">
+          <Reorder.Group axis="y" values={order} onReorder={live} className="p-0 m-0" aria-label="Poemas reordenáveis">
             {order.map((p, i) => <Row key={p.id} poem={p} index={i} total={order.length} busy={act.reorder.isPending} onMove={move} onCommit={commit} onEdit={openEdit} onDelete={(x) => { setDelErr(''); setToDelete(x); }} />)}
           </Reorder.Group>
         ) : (
-          <div className="space-y-6">
-            {shown.map((p) => <PoemCard key={p.id} poem={p} canEdit={canEdit} onEdit={() => openEdit(p)} onDelete={() => { setDelErr(''); setToDelete(p); }} />)}
+          <div>
+            {shown.map((p, index) => <PoemCard key={p.id} index={index} poem={p} canEdit={canEdit} onEdit={() => openEdit(p)} onDelete={() => { setDelErr(''); setToDelete(p); }} />)}
           </div>
         )}
-      </section>
-      <PoemFormDialog open={formOpen} onOpenChange={setFormOpen} poem={editing} pending={act.create.isPending || act.update.isPending} error={formErr} onSubmit={submit} />
-      <ConfirmDelete poem={toDelete} onCancel={() => setToDelete(null)} onConfirm={confirmDel} pending={act.remove.isPending} error={delErr} />
-    </div>
+        </section>
+      </div>
+      <PoemFormDialog open={canEdit && formOpen} onOpenChange={setFormOpen} poem={editing} pending={act.create.isPending || act.update.isPending} error={formErr} onSubmit={submit} />
+      <ConfirmDelete poem={canEdit ? toDelete : null} onCancel={() => setToDelete(null)} onConfirm={confirmDel} pending={act.remove.isPending} error={delErr} />
+    </>
   );
 }

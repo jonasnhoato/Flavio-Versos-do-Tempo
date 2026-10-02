@@ -8,21 +8,33 @@ import Blog from '@/pages/blog';
 import PoemPage from '@/pages/poem';
 import About from '@/pages/about';
 import NotFound from '@/pages/not-found';
+import { AuthProvider } from '@/components/auth-provider';
+import { AuthorSignIn, AuthorSignUp } from '@/pages/author-sign-in';
+import { Show, useAuth } from '@clerk/react';
 import {
   Route,
   Switch,
   useLocation,
   Router as WouterRouter,
+  Redirect,
 } from 'wouter';
 
 const queryClient = new QueryClient();
+
+function PublicHome() {
+  const { isSignedIn } = useAuth();
+  return isSignedIn ? <Redirect to="/autor" /> : <Blog />;
+}
 
 function Router() {
   return (
     <Layout>
       <RoutedErrorBoundary>
         <Switch>
-          <Route path="/" component={Blog} />
+          <Route path="/" component={PublicHome} />
+          <Route path="/autor"><Show when="signed-in"><Blog/></Show><Show when="signed-out"><Redirect to="/"/></Show></Route>
+          <Route path="/sign-in/*?" component={AuthorSignIn} />
+          <Route path="/sign-up/*?" component={AuthorSignUp} />
           <Route path="/poema/:id" component={PoemPage} />
           <Route path="/sobre" component={About} />
           <Route component={NotFound} />
@@ -42,7 +54,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}>
-          <Router />
+          <AuthProvider><Router /></AuthProvider>
         </WouterRouter>
         <Toaster />
       </TooltipProvider>

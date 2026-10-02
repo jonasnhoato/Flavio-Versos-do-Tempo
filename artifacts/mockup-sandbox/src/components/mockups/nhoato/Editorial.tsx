@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import type { FormEvent } from 'react';
-import { ArrowDown, ArrowUp, CalendarDays, Check, Copy, Mail, Plus, Search, Share2, X } from 'lucide-react';
+import { ArrowDown, ArrowUp, CalendarDays, Check, Copy, GripVertical, LockKeyhole, LogIn, Mail, Plus, Search, X } from 'lucide-react';
+import { FaFacebookF, FaWhatsapp } from 'react-icons/fa';
 import { introduction, poems as samplePoems, type Poem } from './_source/data';
 import './Editorial.css';
 
@@ -23,7 +24,11 @@ export function Editorial() {
   const [search, setSearch] = useState('');
   const [selection, setSelection] = useState<ArchiveSelection>({});
   const [modalOpen, setModalOpen] = useState(false);
+  const [loginOpen, setLoginOpen] = useState(() => new URLSearchParams(window.location.search).get('acesso') === 'autor');
+  const [loginError, setLoginError] = useState('');
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [authorPreview, setAuthorPreview] = useState(false);
+  const [draggingId, setDraggingId] = useState<number | null>(null);
   const [draft, setDraft] = useState<Draft>(blankDraft);
   const [toast, setToast] = useState('');
 
@@ -66,12 +71,14 @@ export function Editorial() {
   };
 
   const openNew = () => {
+    if (!authorPreview) return;
     setEditingId(null);
     setDraft(blankDraft());
     setModalOpen(true);
   };
 
   const openEdit = (poem: Poem) => {
+    if (!authorPreview) return;
     setEditingId(poem.id);
     setDraft({ title: poem.title, content: poem.content, date: dateKey(poem.createdAt) });
     setModalOpen(true);
@@ -79,7 +86,7 @@ export function Editorial() {
 
   const savePoem = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!draft.title.trim() || !draft.content.trim()) return;
+    if (!authorPreview || !draft.title.trim() || !draft.content.trim()) return;
     if (editingId !== null) {
       setPoemList((current) => current.map((poem) => poem.id === editingId
         ? { ...poem, title: draft.title.trim(), content: draft.content, createdAt: `${draft.date}T12:00:00` }
@@ -96,6 +103,7 @@ export function Editorial() {
   };
 
   const deletePoem = (poem: Poem) => {
+    if (!authorPreview) return;
     if (window.confirm(`Excluir “${poem.title}” desta prévia?`)) {
       setPoemList((current) => current.filter((item) => item.id !== poem.id));
       notify('Texto excluído desta prévia');
@@ -103,12 +111,26 @@ export function Editorial() {
   };
 
   const movePoem = (id: number, direction: -1 | 1) => {
+    if (!authorPreview) return;
     setPoemList((current) => {
       const index = current.findIndex((poem) => poem.id === id);
       const destination = index + direction;
       if (index < 0 || destination < 0 || destination >= current.length) return current;
       const reordered = [...current];
       [reordered[index], reordered[destination]] = [reordered[destination], reordered[index]];
+      return reordered;
+    });
+  };
+
+  const movePoemTo = (sourceId: number, destinationId: number) => {
+    if (!authorPreview || sourceId === destinationId) return;
+    setPoemList((current) => {
+      const from = current.findIndex((poem) => poem.id === sourceId);
+      const to = current.findIndex((poem) => poem.id === destinationId);
+      if (from < 0 || to < 0) return current;
+      const reordered = [...current];
+      const [pickedUp] = reordered.splice(from, 1);
+      reordered.splice(to, 0, pickedUp);
       return reordered;
     });
   };
@@ -167,18 +189,30 @@ export function Editorial() {
   );
 
   return (
-    <div className="ed">
+    <div className={`ed${authorPreview ? ' ed-author-view' : ''}`}>
       <header className="ed-topbar">
         <a className="ed-brand" href="#inicio" aria-label="Flavio Nhoato — início">
-          <span className="ed-mark" aria-hidden="true">fn</span>
+          <svg className="ed-mark" aria-hidden="true" viewBox="0 0 52 52" fill="none">
+            <path className="ed-mark-orbit" d="M26 2.5C38.98 2.5 49.5 13.02 49.5 26S38.98 49.5 26 49.5 2.5 38.98 2.5 26 13.02 2.5 26 2.5Z" />
+            <path className="ed-mark-flourish" d="M6.4 13.4C13.2 17.2 21.1 16.2 26.6 10.1M45.2 38.7c-5.8-1.8-10.4-1-14.2 2.8" />
+            <path className="ed-mark-glyph" d="M12.5 35V16.5h12m-12 8.3h9" />
+            <path className="ed-mark-glyph" d="M27.8 35V16.5h1.7l9.3 13.1V16.5" />
+            <circle className="ed-mark-star" cx="9.1" cy="37.4" r="1.6" />
+          </svg>
           <span><span className="ed-brand-name">Flavio Nhoato</span><span className="ed-brand-title">Versos do Tempo</span></span>
         </a>
         <nav className="ed-nav" aria-label="Navegação principal">
           <a href="#arquivo">Arquivo</a>
           <a href="#poemas">Poemas</a>
-          <button className="ed-add-nav" onClick={openNew}><Plus size={15} strokeWidth={2.5} />Adicionar texto</button>
+          {authorPreview ? (
+            <div className="ed-author-nav">
+              <span className="ed-author-badge"><span aria-hidden="true" />Modo do autor</span>
+              <button className="ed-author-exit" onClick={() => setAuthorPreview(false)}><LockKeyhole size={14} /> Sair</button>
+            </div>
+              ) : <button className="ed-access-button" aria-label="Entrar no acesso do autor" onClick={() => { setLoginError(''); setLoginOpen(true); }}><LogIn size={15} />Entrar</button>}
         </nav>
       </header>
+      {authorPreview && <div className="ed-preview-notice"><LockKeyhole size={14} /> Você está vendo a prévia das ferramentas do autor. Essas alterações são apenas demonstrativas e não são salvas no site.</div>}
 
       <main id="inicio">
         <section className="ed-hero" aria-labelledby="ed-author">
@@ -218,7 +252,7 @@ export function Editorial() {
                 <input className="ed-search" type="search" aria-label="Buscar poemas" placeholder="Buscar título ou verso" value={search} onChange={(event) => setSearch(event.target.value)} />
               </label>
             </div>
-            <p className="ed-tip">Use as setas para mudar a ordem nesta prévia. As alterações são locais.</p>
+            {authorPreview && <div className="ed-author-tools"><button className="ed-add-nav" onClick={openNew}><Plus size={15} strokeWidth={2.5} /> Adicionar texto</button><span>Arraste a alça de um poema para reorganizá-lo.</span></div>}
             {filteredPoems.length ? (
               <div>
                 {filteredPoems.map((poem, index) => {
@@ -227,8 +261,29 @@ export function Editorial() {
                   const encodedUrl = encodeURIComponent(`${window.location.origin}${window.location.pathname}#poema-${poem.id}`);
                   const encodedText = encodeURIComponent(`${poem.title} — ${window.location.origin}${window.location.pathname}#poema-${poem.id}`);
                   return (
-                    <article className="ed-poem" id={`poema-${poem.id}`} key={poem.id} style={{ animationDelay: `${Math.min(index * 70, 280)}ms` }}>
+                    <article
+                      className={`ed-poem${draggingId === poem.id ? ' ed-is-dragging' : ''}`}
+                      id={`poema-${poem.id}`}
+                      key={poem.id}
+                      style={{ animationDelay: `${Math.min(index * 70, 280)}ms` }}
+                      draggable={authorPreview}
+                      onDragStart={(event) => {
+                        if (!authorPreview) { event.preventDefault(); return; }
+                        setDraggingId(poem.id);
+                        event.dataTransfer.effectAllowed = 'move';
+                        event.dataTransfer.setData('text/plain', String(poem.id));
+                      }}
+                      onDragOver={(event) => { if (authorPreview && draggingId !== null) { event.preventDefault(); event.dataTransfer.dropEffect = 'move'; } }}
+                      onDrop={(event) => {
+                        event.preventDefault();
+                        const sourceId = Number(event.dataTransfer.getData('text/plain')) || draggingId;
+                        if (sourceId !== null) movePoemTo(sourceId, poem.id);
+                        setDraggingId(null);
+                      }}
+                      onDragEnd={() => setDraggingId(null)}
+                    >
                       <div className="ed-poem-top">
+                        {authorPreview && <button className="ed-drag-handle" aria-label={`Arrastar ${poem.title}`} title="Segure e arraste para reorganizar"><GripVertical size={17} /></button>}
                         <div className="ed-poem-index">{String(index + 1).padStart(2, '0')}</div>
                         <div className="ed-poem-main">
                           <h3>{poem.title}</h3>
@@ -239,17 +294,17 @@ export function Editorial() {
                       <div className="ed-poem-actions">
                         <div className="ed-share-actions">
                           <span className="ed-share-label">Compartilhar</span>
-                          <a className="ed-icon-button" aria-label={`Compartilhar ${poem.title} no Facebook`} title="Facebook" href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`} target="_blank" rel="noreferrer"><Share2 size={15} /></a>
-                          <a className="ed-icon-button" aria-label={`Compartilhar ${poem.title} no WhatsApp`} title="WhatsApp" href={`https://wa.me/?text=${encodedText}`} target="_blank" rel="noreferrer"><span className="ed-mono" style={{ fontSize: 10 }}>WA</span></a>
+                           <a className="ed-icon-button ed-social-facebook" aria-label={`Compartilhar ${poem.title} no Facebook`} title="Facebook" href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`} target="_blank" rel="noreferrer"><FaFacebookF size={15} aria-hidden="true" /></a>
+                           <a className="ed-icon-button ed-social-whatsapp" aria-label={`Compartilhar ${poem.title} no WhatsApp`} title="WhatsApp" href={`https://wa.me/?text=${encodedText}`} target="_blank" rel="noreferrer"><FaWhatsapp size={16} aria-hidden="true" /></a>
                           <a className="ed-icon-button" aria-label={`Enviar ${poem.title} por e-mail`} title="E-mail" href={`mailto:?subject=${slug}&body=${encodedText}`}><Mail size={15} /></a>
                           <button className="ed-icon-button" aria-label={`Copiar link de ${poem.title}`} title="Copiar link" onClick={() => void copyLink(poem)}><Copy size={14} /></button>
                         </div>
-                        <div className="ed-edit-actions" aria-label={`Ações para ${poem.title}`}>
-                          <button className="ed-small-action" aria-label={`Subir ${poem.title}`} title="Subir" disabled={overallIndex === 0} onClick={() => movePoem(poem.id, -1)}><ArrowUp size={14} /></button>
-                          <button className="ed-small-action" aria-label={`Descer ${poem.title}`} title="Descer" disabled={overallIndex === poemList.length - 1} onClick={() => movePoem(poem.id, 1)}><ArrowDown size={14} /></button>
-                          <button className="ed-small-action" onClick={() => openEdit(poem)}>Editar</button>
-                          <button className="ed-small-action" onClick={() => deletePoem(poem)}>Excluir</button>
-                        </div>
+                         {authorPreview && <div className="ed-edit-actions" aria-label={`Ações do autor para ${poem.title}`}>
+                           <button className="ed-small-action" aria-label={`Subir ${poem.title}`} title="Subir" disabled={overallIndex === 0} onClick={() => movePoem(poem.id, -1)}><ArrowUp size={14} /></button>
+                           <button className="ed-small-action" aria-label={`Descer ${poem.title}`} title="Descer" disabled={overallIndex === poemList.length - 1} onClick={() => movePoem(poem.id, 1)}><ArrowDown size={14} /></button>
+                           <button className="ed-small-action" onClick={() => openEdit(poem)}>Editar</button>
+                           <button className="ed-small-action" onClick={() => deletePoem(poem)}>Excluir</button>
+                         </div>}
                       </div>
                     </article>
                   );
@@ -280,6 +335,24 @@ export function Editorial() {
               <div className="ed-form-field"><label htmlFor="ed-content">Texto <span className="ed-count">— as quebras de linha serão mantidas</span></label><textarea id="ed-content" required value={draft.content} onChange={(event) => setDraft({ ...draft, content: event.target.value })} /></div>
               <div className="ed-form-footer"><button type="button" className="ed-form-cancel" onClick={() => setModalOpen(false)}>Cancelar</button><button type="submit" className="ed-form-submit"><Check size={15} style={{ verticalAlign: 'middle', marginRight: 7 }} />Salvar texto</button></div>
             </form>
+          </section>
+        </div>
+      )}
+      {loginOpen && (
+        <div className="ed-modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) setLoginOpen(false); }}>
+          <section className="ed-modal ed-login-modal" role="dialog" aria-modal="true" aria-labelledby="ed-login-title" aria-describedby="ed-login-description">
+            <div className="ed-modal-head">
+              <div><div className="ed-feed-overline ed-mono">Área reservada</div><h2 id="ed-login-title">Acesso do autor</h2></div>
+              <button className="ed-modal-close" aria-label="Fechar" onClick={() => setLoginOpen(false)}><X size={18} /></button>
+            </div>
+            <p id="ed-login-description" className="ed-login-description">Entre para publicar e organizar seus poemas. As ferramentas de edição ficam indisponíveis para visitantes.</p>
+            <form onSubmit={(event) => { event.preventDefault(); setLoginError('O acesso ainda não foi conectado ao sistema seguro de autenticação do site. Nenhuma sessão foi iniciada.'); }}>
+              <div className="ed-form-field"><label htmlFor="ed-login-email">E-mail</label><input id="ed-login-email" type="email" autoComplete="username" required placeholder="seu@email.com" /></div>
+              <div className="ed-form-field"><label htmlFor="ed-login-password">Senha</label><input id="ed-login-password" type="password" autoComplete="current-password" required placeholder="Sua senha" /></div>
+              {loginError && <p className="ed-login-error" role="alert">{loginError}</p>}
+              <div className="ed-form-footer"><button type="button" className="ed-form-cancel" onClick={() => setLoginOpen(false)}>Voltar ao blog</button><button type="submit" className="ed-form-submit"><LockKeyhole size={15} /> Entrar</button></div>
+            </form>
+            <p className="ed-login-security">A área do autor exige uma sessão verificada. Nenhuma ferramenta editorial é liberada nesta prévia visual.</p>
           </section>
         </div>
       )}

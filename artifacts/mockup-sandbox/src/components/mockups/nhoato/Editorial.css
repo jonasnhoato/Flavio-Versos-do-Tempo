@@ -224,6 +224,112 @@
   .ed .ed-footer { gap: 10px; flex-direction: column; }
 }
 
+/* The author/site identity should hold its own alongside the hero typography. */
+.ed .ed-topbar { min-height: 98px; }
+.ed .ed-mark { width: 52px; height: 52px; }
+.ed .ed-brand { gap: 14px; }
+.ed .ed-brand-name { font-size: 16px; letter-spacing: .01em; }
+.ed .ed-brand-title { font-size: 12px; margin-top: 3px; }
+.ed .ed-nav { gap: 28px; }
+.ed .ed-nav a, .ed .ed-nav button { font-size: 13px; }
+.ed .ed-nav .ed-access-button { min-height: 46px; padding-right: 18px; padding-left: 18px; }
+.ed .ed-nav .ed-access-button svg { width: 17px; height: 17px; }
+
+@media (max-width: 760px) {
+  .ed .ed-topbar { min-height: 82px; }
+  .ed .ed-mark { width: 46px; height: 46px; }
+  .ed .ed-brand-name { font-size: 14px; }
+  .ed .ed-brand-title { font-size: 11px; }
+  .ed .ed-nav { gap: 10px; }
+  .ed .ed-nav .ed-access-button { min-height: 42px; padding-right: 13px; padding-left: 13px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .ed *, .ed *::before, .ed *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+}
+
+/* Softer, more contemporary controls and a hand-drawn author monogram. */
+.ed .ed-mark {
+  width: 44px; height: 44px; flex: 0 0 auto; overflow: visible;
+  filter: drop-shadow(0 4px 12px rgba(209,243,106,.11));
+}
+.ed .ed-mark-orbit { stroke: var(--ed-accent); stroke-width: 1.2; opacity: .68; stroke-dasharray: 137 11; stroke-linecap: round; }
+.ed .ed-mark-flourish { stroke: var(--ed-accent); stroke-width: .85; stroke-linecap: round; opacity: .63; }
+.ed .ed-mark-glyph { stroke: var(--ed-ink); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.ed .ed-mark-star { fill: var(--ed-accent); }
+.ed .ed-nav .ed-access-button {
+  min-height: 42px; border: 1px solid rgba(209,243,106,.28); border-radius: 999px;
+  padding: 0 16px; background: rgba(209,243,106,.065); color: var(--ed-ink);
+  display: inline-flex; align-items: center; gap: 9px; cursor: pointer; font-size: 12px;
+  transition: border-color .2s, background .2s, transform .2s;
+}
+.ed .ed-nav .ed-access-button:hover { border-color: var(--ed-accent); background: rgba(209,243,106,.12); transform: translateY(-1px); }
+.ed .ed-nav .ed-access-button > svg { color: var(--ed-accent); }
+.ed .ed-access-hint { color: var(--ed-soft); font: 9px 'DM Mono', monospace; text-transform: uppercase; letter-spacing: .08em; border-left: 1px solid var(--ed-line); padding-left: 9px; }
+.ed .ed-author-nav { display: flex; align-items: center; gap: 15px; }
+.ed .ed-author-badge { display: inline-flex; align-items: center; gap: 8px; color: var(--ed-accent); font: 10px 'DM Mono', monospace; letter-spacing: .07em; text-transform: uppercase; }
+.ed .ed-author-badge > span { width: 7px; height: 7px; border-radius: 50%; background: var(--ed-accent); box-shadow: 0 0 12px rgba(209,243,106,.52); }
+.ed .ed-author-exit { min-height: 40px; display: inline-flex; align-items: center; gap: 7px; padding: 0 12px; border: 1px solid var(--ed-line); border-radius: 999px; color: var(--ed-muted); background: transparent; cursor: pointer; font-size: 11px; }
+.ed .ed-author-exit:hover { border-color: var(--ed-accent); color: var(--ed-ink); }
+.ed .ed-preview-notice {
+  width: min(100% - 64px, 1184px); margin: 14px auto 0; padding: 11px 16px;
+  display: flex; align-items: center; gap: 10px; border: 1px solid rgba(209,243,106,.18);
+  border-radius: 14px; background: rgba(209,243,106,.055); color: var(--ed-muted); font-size: 12px;
+}
+.ed .ed-preview-notice svg { flex: 0 0 auto; color: var(--ed-accent); }
+.ed .ed-author-tools { display: flex; align-items: center; gap: 14px; margin: -4px 0 24px; color: var(--ed-muted); font-size: 12px; }
+.ed .ed-author-tools .ed-add-nav { color: var(--ed-accent-ink); background: var(--ed-accent); padding: 11px 17px; border: 0; border-radius: 999px; font-weight: 800; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 12px; }
+.ed .ed-author-tools .ed-add-nav:hover { background: #e0ff88; }
+.ed .ed-is-dragging { opacity: .42; }
+.ed .ed-author-view .ed-poem { cursor: grab; }
+.ed .ed-author-view .ed-poem:active { cursor: grabbing; }
+.ed .ed-drag-handle {
+  flex: 0 0 auto; width: 34px; height: 34px; margin: 2px 1px 0 0;
+  display: inline-grid; place-items: center; border: 1px solid var(--ed-line); border-radius: 50%;
+  color: var(--ed-accent); background: rgba(209,243,106,.055); cursor: grab; touch-action: none;
+}
+.ed .ed-drag-handle:hover { border-color: var(--ed-accent); background: rgba(209,243,106,.12); }
+.ed .ed-social-facebook, .ed .ed-social-whatsapp { width: 36px; height: 36px; border-radius: 50%; transition: color .18s, background .18s, transform .18s; }
+.ed .ed-social-facebook:hover { color: #83a8ff; background: rgba(71,117,255,.12); }
+.ed .ed-social-whatsapp:hover { color: #7ddba0; background: rgba(56,190,111,.12); }
+.ed .ed-nav .ed-add-nav, .ed .ed-author-tools .ed-add-nav { border-radius: 999px; }
+.ed .ed-icon-button, .ed .ed-small-action { border-radius: 999px; }
+.ed .ed-modal { border-radius: 24px; }
+.ed .ed-modal-close { border-radius: 50%; }
+.ed .ed-form-field input, .ed .ed-form-field textarea { border-radius: 12px; }
+.ed .ed-form-cancel, .ed .ed-form-submit, .ed .ed-toast { border-radius: 999px; }
+.ed .ed-intro { border-left-color: rgba(209,243,106,.54); }
+.ed .ed-login-modal { border-radius: 28px; }
+.ed .ed-login-description { max-width: 40ch; margin: 0 0 27px; color: var(--ed-muted); font-size: 14px; line-height: 1.7; }
+.ed .ed-login-security { margin: 23px 0 0; border-top: 1px solid var(--ed-line); padding-top: 17px; color: var(--ed-soft); font: 11px/1.7 'DM Mono', monospace; }
+.ed .ed-login-error { border-left: 2px solid var(--ed-accent); padding: 8px 12px; color: var(--ed-muted); font-size: 12px; line-height: 1.6; }
+.ed .ed-social-facebook, .ed .ed-social-whatsapp { transform: translateY(0); }
+.ed .ed-social-facebook:hover, .ed .ed-social-whatsapp:hover { transform: translateY(-2px); }
+.ed .ed-access-button { border-radius: 999px; }
+
+@media (max-width: 760px) {
+  .ed .ed-nav { gap: 10px; }
+  .ed .ed-nav .ed-access-button { min-height: 40px; padding: 0 13px; font-size: 11px; }
+  .ed .ed-access-hint { display: none; }
+  .ed .ed-author-nav { gap: 8px; }
+  .ed .ed-author-badge { font-size: 8px; letter-spacing: .015em; }
+  .ed .ed-author-exit { min-height: 38px; padding: 0 10px; font-size: 10px; }
+  .ed .ed-preview-notice { width: min(100% - 36px, 600px); align-items: flex-start; line-height: 1.6; }
+  .ed .ed-author-tools { align-items: flex-start; flex-direction: column; gap: 9px; }
+  .ed .ed-drag-handle { width: 30px; height: 30px; margin-right: -8px; }
+  .ed .ed-poem-top:has(.ed-drag-handle) { gap: 10px; }
+}
+
+/* A clearer author signature in the compact site masthead. */
+.ed .ed-mark { width: 60px; height: 60px; }
+.ed .ed-brand { gap: 16px; }
+.ed .ed-brand-name { font-size: 18px; }
+.ed .ed-brand-title { font-size: 14px; margin-top: 4px; }
+.ed .ed-topbar { min-height: 104px; }
+@media (max-width: 760px) {
+  .ed .ed-mark { width: 52px; height: 52px; }
+  .ed .ed-brand { gap: 12px; }
+  .ed .ed-brand-name { font-size: 16px; }
+  .ed .ed-brand-title { font-size: 13px; }
+  .ed .ed-topbar { min-height: 82px; }
 }

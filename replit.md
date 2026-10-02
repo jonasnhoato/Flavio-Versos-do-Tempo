@@ -1,4 +1,4 @@
-# Flávio — Versos do Tempo
+# Flavio Nhoato — Versos do Tempo
 
 Blog pessoal de poesia com publicação, leitura acessível e compartilhamento.
 
@@ -36,7 +36,7 @@ _Describe the high-level user-facing capabilities of this app once they exist._
 
 - Flávio tem centenas de poemas; serão adicionados aos poucos.
 - O celular será o principal dispositivo usado pelo autor para publicar e compartilhar diariamente.
-- Para a próxima direção visual, usar fundo preto e aparência moderna; a primeira proposta azul e dourada foi rejeitada.
+- A direção escolhida é Editorial: fundo preto, detalhes verde-lima, monograma FN e controles suaves; a primeira proposta azul e dourada foi rejeitada.
 - Manter o tamanho dos poemas; reduzir o tamanho das fontes dos menus, metadados e controles ao redor.
 - A apresentação do blog deve usar o nome completo informado para a marca e uma introdução ampliada na página inicial, sem biografia inventada.
 - Remover Instagram das propostas e do design escolhido; manter Facebook, WhatsApp, e-mail e cópia de URL.
@@ -44,7 +44,7 @@ _Describe the high-level user-facing capabilities of this app once they exist._
 
 ## Gotchas
 
-- A primeira versão permite edição apenas em desenvolvimento. Antes de habilitar edição no site publicado, integrar autenticação e autorização exclusiva do autor; nunca liberar escrita pública.
+- Exigir acesso verificado e autorização exclusiva do autor para qualquer escrita, inclusive na prévia. Visitantes e contas sem autorização apenas leem e compartilham.
 - Os três textos iniciais são demonstrações, não obras de Flávio. Não remover essa identificação nem atribuir os exemplos ao autor.
 
 ## Pointers

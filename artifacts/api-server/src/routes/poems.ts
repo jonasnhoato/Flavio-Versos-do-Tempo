@@ -1,6 +1,8 @@
 import { Router, type IRouter, type RequestHandler } from "express";
 import { asc, eq, sql } from "drizzle-orm";
 import { db, poemsTable, type PoemRecord } from "@workspace/db";
+import { getAuth } from "@clerk/express";
+import { isAuthor } from "../lib/author-access";
 import {
   ListPoemsResponse, CreatePoemBody, CreatePoemResponse,
   GetPoemParams, GetPoemResponse, UpdatePoemBody, UpdatePoemParams,
@@ -9,14 +11,21 @@ import {
 } from "@workspace/api-zod";
 
 const router: IRouter = Router();
-const canEdit = process.env.NODE_ENV === "development";
 const serialized = (poem: PoemRecord) => ({ ...poem, createdAt: poem.createdAt.toISOString() });
 const ordered = () => db.select().from(poemsTable).orderBy(asc(poemsTable.position), asc(poemsTable.id));
-// This initial preview deliberately has no public write access in production.
-// Replace this gate with an authenticated owner check before enabling published editing.
-const requireEditor: RequestHandler = (req, res, next) => {
-  if (!canEdit) {
-    res.status(403).json({ error: "A publicação está bloqueada até configurar o acesso exclusivo do autor." });
+const requireEditor: RequestHandler = async (req, res, next) => {
+  if (!getAuth(req).userId) {
+    res.status(401).json({ error: "Entre na conta do autor para alterar poemas." });
+    return;
+  }
+  try {
+    if (!await isAuthor(req)) {
+      res.status(403).json({ error: "Esta conta não tem autorização de autor." });
+      return;
+    }
+  } catch {
+    req.log.error("Não foi possível verificar a autorização do autor.");
+    res.status(503).json({ error: "Não foi possível verificar o acesso. Tente novamente." });
     return;
   }
   if (!req.is("application/json") && req.method !== "DELETE") {
@@ -25,9 +34,13 @@ const requireEditor: RequestHandler = (req, res, next) => {
   }
   const origin = req.get("origin");
   const expectedHost = req.get("x-forwarded-host") ?? req.get("host");
-  if (origin && new URL(origin).host !== expectedHost) {
-    res.status(403).json({ error: "Origem não autorizada." });
-    return;
+  if (origin) {
+    try {
+      if (new URL(origin).host !== expectedHost) throw new Error("origin");
+    } catch {
+      res.status(403).json({ error: "Origem não autorizada." });
+      return;
+    }
   }
   next();
 };
@@ -35,7 +48,15 @@ const requireEditor: RequestHandler = (req, res, next) => {
 router.get("/poems", async (_req, res): Promise<void> => {
   res.json(ListPoemsResponse.parse((await ordered()).map(serialized)));
 });
-router.get("/blog-info", async (_req, res): Promise<void> => {
+router.get("/blog-info", async (req, res): Promise<void> => {
+  let canEdit: boolean;
+  try { canEdit = await isAuthor(req); }
+  catch {
+    req.log.error("Não foi possível verificar a autorização do autor.");
+    res.status(503).json({ error: "Não foi possível verificar o acesso. Tente novamente." });
+    return;
+  }
+  res.set("Cache-Control", "private, no-store");
   const poems = await ordered();
   const dates = new Map<string, number>();
   for (const poem of poems) {
