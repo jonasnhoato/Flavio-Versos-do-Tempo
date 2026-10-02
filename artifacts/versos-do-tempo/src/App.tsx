@@ -9,10 +9,11 @@ import PoemPage from '@/pages/poem';
 import About from '@/pages/about';
 import NotFound from '@/pages/not-found';
 import { AuthProvider } from '@/components/auth-provider';
-import { AuthorSignIn, AuthorSignUp } from '@/pages/author-sign-in';
+import { AuthorSignIn } from '@/pages/author-sign-in';
 import { useAuth } from '@clerk/react';
 import {
   Route,
+  Redirect,
   Switch,
   useLocation,
   useRoute,
@@ -43,7 +44,7 @@ function Router() {
           {reading && params && <PoemPage poemId={params.id} />}
         </> : <Switch>
           <Route path="/sign-in/*?" component={AuthorSignIn} />
-          <Route path="/sign-up/*?" component={AuthorSignUp} />
+          <Route path="/sign-up/*?"><Redirect to="/sign-in" /></Route>
           <Route path="/sobre" component={About} />
           <Route component={NotFound} />
         </Switch>}
