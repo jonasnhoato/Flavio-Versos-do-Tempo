@@ -11,6 +11,86 @@ tags:
   - name: health
     description: Health operations
 paths:
+  /poems:
+    get:
+      operationId: listPoems
+      responses:
+        "200":
+          description: Poems in custom order
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Poem" }
+    post:
+      operationId: createPoem
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PoemInput" }
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Poem" }
+  /poems/reorder:
+    put:
+      operationId: reorderPoems
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PoemOrder" }
+      responses:
+        "200":
+          description: Reordered
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Poem" }
+  /poems/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: integer }
+    get:
+      operationId: getPoem
+      responses:
+        "200":
+          description: Poem
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Poem" }
+    patch:
+      operationId: updatePoem
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PoemInput" }
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Poem" }
+    delete:
+      operationId: deletePoem
+      responses:
+        "204": { description: Deleted }
+  /blog-info:
+    get:
+      operationId: getBlogInfo
+      responses:
+        "200":
+          description: Blog information
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/BlogInfo" }
   /healthz:
     get:
       operationId: healthCheck
@@ -26,6 +106,43 @@ paths:
                 $ref: "#/components/schemas/HealthStatus"
 components:
   schemas:
+    Poem:
+      type: object
+      required: [id, title, content, createdAt, position, isExample]
+      properties:
+        id: { type: integer }
+        title: { type: string }
+        content: { type: string }
+        createdAt: { type: string }
+        position: { type: integer }
+        isExample: { type: boolean }
+    PoemInput:
+      type: object
+      required: [title, content]
+      properties:
+        title: { type: string, minLength: 1, maxLength: 200 }
+        content: { type: string, minLength: 1, maxLength: 100000 }
+    PoemOrder:
+      type: object
+      required: [ids]
+      properties:
+        ids:
+          type: array
+          items: { type: integer }
+    BlogInfo:
+      type: object
+      required: [total, canEdit, archive]
+      properties:
+        total: { type: integer }
+        canEdit: { type: boolean }
+        archive:
+          type: array
+          items:
+            type: object
+            required: [date, count]
+            properties:
+              date: { type: string }
+              count: { type: integer }
     HealthStatus:
       type: object
       properties:

@@ -1,0 +1,1 @@
+- [Publicação do autor](author-access.md) — a prévia permite experimentar; acesso exclusivo do autor é necessário antes de liberar escrita pública.

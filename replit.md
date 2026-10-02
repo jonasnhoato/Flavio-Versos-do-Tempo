@@ -1,6 +1,6 @@
-# [Project name]
+# Flávio — Versos do Tempo
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+Blog pessoal de poesia com publicação, leitura acessível e compartilhamento.
 
 ## Run & Operate
 
@@ -34,11 +34,15 @@ _Describe the high-level user-facing capabilities of this app once they exist._
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- Flávio tem centenas de poemas; serão adicionados aos poucos.
+- O celular será o principal dispositivo usado pelo autor para publicar e compartilhar diariamente.
+- Fundo escuro, fontes grandes e fáceis de ler; apresentação simples e elegante.
+- Publicação em janela sobreposta, blocos reordenáveis e arquivo por ano, mês e dia.
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- A primeira versão permite edição apenas em desenvolvimento. Antes de habilitar edição no site publicado, integrar autenticação e autorização exclusiva do autor; nunca liberar escrita pública.
+- Os três textos iniciais são demonstrações, não obras de Flávio. Não remover essa identificação nem atribuir os exemplos ao autor.
 
 ## Pointers
 

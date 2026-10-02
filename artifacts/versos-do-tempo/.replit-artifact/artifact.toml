@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Flávio — Versos do Tempo"
+description = "Blog de poemas de Flávio, com leitura confortável, publicação pelo celular, organização e compartilhamento."
+version = "1.0.0"
+id = "artifacts/versos-do-tempo"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25477
+
+[services.development]
+run = "pnpm --filter @workspace/versos-do-tempo run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/versos-do-tempo", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/versos-do-tempo/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25477"
+BASE_PATH = "/"
