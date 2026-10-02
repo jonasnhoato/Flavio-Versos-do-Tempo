@@ -36,7 +36,10 @@ _Describe the high-level user-facing capabilities of this app once they exist._
 
 - Flávio tem centenas de poemas; serão adicionados aos poucos.
 - O celular será o principal dispositivo usado pelo autor para publicar e compartilhar diariamente.
-- Fundo escuro, fontes grandes e fáceis de ler; apresentação simples e elegante.
+- Para a próxima direção visual, usar fundo preto e aparência moderna; a primeira proposta azul e dourada foi rejeitada.
+- Manter o tamanho dos poemas; reduzir o tamanho das fontes dos menus, metadados e controles ao redor.
+- A apresentação do blog deve usar o nome completo informado para a marca e uma introdução ampliada na página inicial, sem biografia inventada.
+- Remover Instagram das propostas e do design escolhido; manter Facebook, WhatsApp, e-mail e cópia de URL.
 - Publicação em janela sobreposta, blocos reordenáveis e arquivo por ano, mês e dia.
 
 ## Gotchas
