@@ -11,7 +11,6 @@ export default function About() {
       <div className="mt-8 space-y-6 text-[15px] leading-[1.8] text-muted-foreground">
         <p>“Flavio Nhoato — Versos do Tempo” é um blog de poesia pensado como um livro querido: fundo escuro, letras confortáveis e uma coisa de cada vez, para ler com calma no celular.</p>
         <p>Esta página não traz biografia. Não há aqui nenhuma história de vida, data ou fato sobre o autor que ele mesmo não tenha contado, e por isso nada foi inventado. Quando Flavio quiser, ele poderá escrever suas próprias palavras neste lugar.</p>
-        <p>Os poemas marcados com <strong className="text-primary font-semibold">Texto de demonstração</strong> são apenas exemplos para mostrar como o blog funciona. Não são de autoria de Flavio e serão substituídos pelos textos dele.</p>
         <p>Cada poema tem um endereço próprio e pode ser compartilhado por Facebook, WhatsApp, e-mail ou link.</p>
         <p className="text-sm text-muted-foreground border-l border-primary pl-4" data-testid="text-edit-status">
           {info.data?.canEdit
