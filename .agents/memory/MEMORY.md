@@ -1,3 +1,4 @@
 - [Publicação do autor](author-access.md) — escrita exclusiva do autor, inclusive na prévia; leitura e compartilhamento públicos.
 - [Permissões ao trocar de conta](authorization-ui.md) — limpar cache não garante retirar permissões visuais; acompanhar a identidade e o login.
 - [Ordem das publicações](publication-order.md) — novos textos entram no topo; preservar o acervo e a ordem relativa dos anteriores.
+- [Visualizações públicas](view-counts.md) — contador para todos; aberturas do autor conectado não devem aumentar a contagem.

@@ -1,6 +1,6 @@
 import type { PointerEvent } from 'react';
 import { Link } from 'wouter';
-import { ArrowDown, ArrowRight, ArrowUp, GripVertical, Pencil, Trash2 } from 'lucide-react';
+import { ArrowDown, ArrowRight, ArrowUp, Eye, GripVertical, Pencil, Trash2 } from 'lucide-react';
 import type { Poem } from '@workspace/api-client-react';
 import { ShareBar } from '@/components/share-bar';
 import { formatDate } from '@/lib/poems';
@@ -22,6 +22,10 @@ export function PoemCard({ poem, index, full, canEdit, onEdit, onDelete, reorder
           {full ? <h1 className="ed-detail-title">{poem.title}</h1> : <h3><Link href={`/poema/${poem.id}`} className="ed-poem-link" data-testid={`link-poem-${poem.id}`}>{poem.title}</Link></h3>}
           <p className="ed-poem-meta">
             <time dateTime={poem.createdAt}>{formatDate(poem.createdAt)}</time>
+            <span className="inline-flex items-center gap-1.5" data-testid={`views-poem-${poem.id}`}>
+              <Eye size={13} aria-hidden="true" />
+              {poem.viewCount.toLocaleString('pt-BR')} {poem.viewCount === 1 ? 'visualização' : 'visualizações'}
+            </span>
             {poem.isExample && <span className="ed-example" data-testid={`badge-example-${poem.id}`}>Texto de demonstração</span>}
           </p>
         </div>

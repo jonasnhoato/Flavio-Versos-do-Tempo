@@ -13,4 +13,6 @@ export interface Poem {
   createdAt: string;
   position: number;
   isExample: boolean;
+  /** @minimum 0 */
+  viewCount: number;
 }

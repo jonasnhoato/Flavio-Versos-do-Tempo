@@ -24,7 +24,9 @@ import type {
   HealthStatus,
   Poem,
   PoemInput,
-  PoemOrder
+  PoemOrder,
+  PoemViewCount,
+  PoemViewInput
 } from './api.schemas';
 
 import { customFetch } from '../custom-fetch';
@@ -509,6 +511,89 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
         TContext
       > => {
       return useMutation(getDeletePoemMutationOptions(options));
+    }
+
+export const getRecordPoemViewUrl = (id: number,) => {
+
+
+
+
+  return `/api/poems/${id}/views`
+}
+
+export const recordPoemView = async (id: number,
+    poemViewInput: PoemViewInput, options?: Parameters<typeof customFetch>[1]): Promise<PoemViewCount> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<PoemViewCount>(getRecordPoemViewUrl(id),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(poemViewInput)
+  }
+);}
+
+
+
+
+
+export const getRecordPoemViewMutationKey = () => ['recordPoemView'] as const;
+
+export const getRecordPoemViewMutationOptions = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof recordPoemView>>, TError,RecordPoemViewMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof recordPoemView>>, TError,RecordPoemViewMutationVariables, TContext> => {
+
+const mutationKey = getRecordPoemViewMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof recordPoemView>>, RecordPoemViewMutationVariables> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  recordPoemView(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RecordPoemViewMutationResult = NonNullable<Awaited<ReturnType<typeof recordPoemView>>>
+    export type RecordPoemViewMutationBody = BodyType<PoemViewInput>
+    export type RecordPoemViewMutationError = ErrorType<void>
+    export type RecordPoemViewMutationVariables = {id: number;data: BodyType<PoemViewInput>}
+
+    export const useRecordPoemView = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof recordPoemView>>, TError,RecordPoemViewMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof recordPoemView>>,
+        TError,
+        RecordPoemViewMutationVariables,
+        TContext
+      > => {
+      return useMutation(getRecordPoemViewMutationOptions(options));
     }
 
 export const getGetBlogInfoUrl = () => {

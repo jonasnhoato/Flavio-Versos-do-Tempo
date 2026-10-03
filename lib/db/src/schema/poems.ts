@@ -8,6 +8,7 @@ export const poemsTable = pgTable("poems", {
   content: text("content").notNull(),
   position: integer("position").notNull().default(0),
   isExample: boolean("is_example").notNull().default(false),
+  viewCount: integer("view_count").notNull().default(0),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 export const insertPoemSchema = createInsertSchema(poemsTable).omit({ id: true, createdAt: true });

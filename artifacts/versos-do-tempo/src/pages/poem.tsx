@@ -11,17 +11,19 @@ import { Notice, PoemSkeleton, pillBtn } from '@/components/states';
 import { usePoemActions } from '@/hooks/use-poem-actions';
 import { useMeta } from '@/hooks/use-meta';
 import { errMsg } from '@/lib/poems';
+import { usePoemView } from '@/hooks/use-poem-view';
 
 export default function PoemPage({ poemId }: { poemId: string }) {
   const id = Number(poemId);
   const valid = Number.isInteger(id) && id > 0;
   const [, setLoc] = useLocation();
-  const poemQ = useGetPoem(id, { query: { enabled: valid, queryKey: getGetPoemQueryKey(id), retry: false } });
+  const poemQ = useGetPoem(id, { query: { enabled: valid, queryKey: getGetPoemQueryKey(id), retry: false, refetchInterval: 60000 } });
   const info = useAuthorAccess();
   const { isSignedIn } = useAuth();
   const close = () => setLoc(isSignedIn ? '/autor' : '/', { replace: true });
   const act = usePoemActions();
   const poem = poemQ.data;
+  const view = usePoemView(id, valid && !!poem);
   useMeta(poem ? `${poem.title} — Flavio Nhoato, Versos do Tempo` : 'Texto — Flavio Nhoato, Versos do Tempo', poem ? poem.content.replace(/\s+/g, ' ').slice(0, 150) : 'Leia um texto de Flavio Nhoato — Versos do Tempo.');
   const [edit, setEdit] = useState(false);
   const [del, setDel] = useState(false);
@@ -44,6 +46,7 @@ export default function PoemPage({ poemId }: { poemId: string }) {
         ) : poemQ.isLoading || !poem ? <PoemSkeleton /> : (
           <div className="rise">
             <PoemCard poem={poem} full canEdit={!!info.data?.canEdit} onEdit={() => { setErr(''); setEdit(true); }} onDelete={() => { setErr(''); setDel(true); }} />
+            {view.error && <p role="status" className="ed-tip">Não foi possível registrar esta visualização. <button type="button" className="underline" onClick={view.retry}>Tentar novamente</button></p>}
           </div>
         )}
           </div>

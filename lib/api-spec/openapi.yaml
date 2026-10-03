@@ -82,6 +82,27 @@ paths:
       operationId: deletePoem
       responses:
         "204": { description: Deleted }
+  /poems/{id}/views:
+    post:
+      operationId: recordPoemView
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, minimum: 1 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PoemViewInput" }
+      responses:
+        "200":
+          description: Current count; author visits and repeated request IDs do not increment it
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PoemViewCount" }
+        "404": { description: Poem not found }
+        "503": { description: Author identity could not be verified }
   /blog-info:
     get:
       operationId: getBlogInfo
@@ -108,7 +129,7 @@ components:
   schemas:
     Poem:
       type: object
-      required: [id, title, content, createdAt, position, isExample]
+      required: [id, title, content, createdAt, position, isExample, viewCount]
       properties:
         id: { type: integer }
         title: { type: string }
@@ -116,6 +137,17 @@ components:
         createdAt: { type: string }
         position: { type: integer }
         isExample: { type: boolean }
+        viewCount: { type: integer, minimum: 0 }
+    PoemViewInput:
+      type: object
+      required: [requestId]
+      properties:
+        requestId: { type: string, format: uuid }
+    PoemViewCount:
+      type: object
+      required: [viewCount]
+      properties:
+        viewCount: { type: integer, minimum: 0 }
     PoemInput:
       type: object
       required: [title, content]

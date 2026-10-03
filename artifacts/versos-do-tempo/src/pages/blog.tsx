@@ -3,7 +3,7 @@ import { Reorder, useDragControls } from 'framer-motion';
 import { CalendarDays, Plus, Search, X } from 'lucide-react';
 import { useLocation, useSearch } from 'wouter';
 import { useAuth } from '@clerk/react';
-import { useListPoems, type Poem } from '@workspace/api-client-react';
+import { getListPoemsQueryKey, useListPoems, type Poem } from '@workspace/api-client-react';
 import { useAuthorAccess } from '@/hooks/use-author-access';
 import { PoemCard } from '@/components/poem-card';
 import { BlogIntroduction } from '@/components/blog-introduction';
@@ -31,7 +31,7 @@ export default function Blog() {
   useMeta('Flavio Nhoato — Versos do Tempo | Textos', 'Blog de textos de Flavio Nhoato: textos para ler com calma, compartilhar e guardar.', !location.startsWith('/poema/'));
   const search = useSearch();
   const { isSignedIn } = useAuth();
-  const list = useListPoems();
+  const list = useListPoems({ query: { queryKey: getListPoemsQueryKey(), refetchInterval: isSignedIn ? false : 60000 } });
   const info = useAuthorAccess();
   const act = usePoemActions();
   const canEdit = !!info.data?.canEdit;

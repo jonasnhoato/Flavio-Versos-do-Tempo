@@ -12,3 +12,5 @@ export * from './healthStatus';
 export * from './poem';
 export * from './poemInput';
 export * from './poemOrder';
+export * from './poemViewCount';
+export * from './poemViewInput';

@@ -1,6 +1,6 @@
 import { Router, type IRouter, type RequestHandler } from "express";
 import { asc, eq, sql } from "drizzle-orm";
-import { db, poemsTable, type PoemRecord } from "@workspace/db";
+import { db, poemsTable, poemViewsTable, type PoemRecord } from "@workspace/db";
 import { getAuth } from "@clerk/express";
 import { isAuthor } from "../lib/author-access";
 import {
@@ -8,6 +8,7 @@ import {
   GetPoemParams, GetPoemResponse, UpdatePoemBody, UpdatePoemParams,
   UpdatePoemResponse, DeletePoemParams, ReorderPoemsBody,
   ReorderPoemsResponse, GetBlogInfoResponse,
+  RecordPoemViewParams, RecordPoemViewBody, RecordPoemViewResponse,
 } from "@workspace/api-zod";
 
 const router: IRouter = Router();
@@ -108,6 +109,52 @@ router.get("/poems/:id", async (req, res): Promise<void> => {
   const [poem] = await db.select().from(poemsTable).where(eq(poemsTable.id, params.data.id));
   if (!poem) { res.status(404).json({ error: "Poema não encontrado." }); return; }
   res.json(GetPoemResponse.parse(serialized(poem)));
+});
+router.post("/poems/:id/views", async (req, res): Promise<void> => {
+  res.set("Cache-Control", "private, no-store");
+  if (!req.is("application/json")) {
+    res.status(415).json({ error: "Envie JSON." }); return;
+  }
+  const origin = req.get("origin");
+  if (origin) {
+    try {
+      if (new URL(origin).host !== (req.get("x-forwarded-host") ?? req.get("host"))) throw new Error("origin");
+    } catch {
+      res.status(403).json({ error: "Origem não autorizada." }); return;
+    }
+  }
+  const params = RecordPoemViewParams.safeParse(req.params);
+  const parsed = RecordPoemViewBody.safeParse(req.body);
+  if (!params.success || !parsed.success) {
+    res.status(400).json({ error: "Visualização inválida." }); return;
+  }
+  const [poem] = await db.select().from(poemsTable).where(eq(poemsTable.id, params.data.id));
+  if (!poem) { res.status(404).json({ error: "Poema não encontrado." }); return; }
+  try {
+    if (await isAuthor(req)) {
+      res.json(RecordPoemViewResponse.parse({ viewCount: poem.viewCount })); return;
+    }
+  } catch {
+    // Never count a visit when the signed-in author's identity cannot be checked.
+    req.log.error("Não foi possível verificar o autor para registrar a visualização.");
+    res.status(503).json({ error: "Não foi possível registrar a visualização. Tente novamente." }); return;
+  }
+  const result = await db.transaction(async (tx) => {
+    // Lock the poem so a concurrent deletion cannot invalidate the receipt.
+    const [current] = await tx.select().from(poemsTable)
+      .where(eq(poemsTable.id, params.data.id)).for("update");
+    if (!current) return null;
+    const receipt = await tx.insert(poemViewsTable).values({
+      requestId: parsed.data.requestId, poemId: current.id,
+    }).onConflictDoNothing().returning({ requestId: poemViewsTable.requestId });
+    if (!receipt.length) return { viewCount: current.viewCount };
+    const [updated] = await tx.update(poemsTable).set({
+      viewCount: sql`${poemsTable.viewCount} + 1`,
+    }).where(eq(poemsTable.id, current.id)).returning({ viewCount: poemsTable.viewCount });
+    return updated;
+  });
+  if (!result) { res.status(404).json({ error: "Poema não encontrado." }); return; }
+  res.json(RecordPoemViewResponse.parse(result));
 });
 router.patch("/poems/:id", requireEditor, async (req, res): Promise<void> => {
   const params = UpdatePoemParams.safeParse(req.params);

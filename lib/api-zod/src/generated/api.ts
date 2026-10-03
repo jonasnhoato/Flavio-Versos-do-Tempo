@@ -8,13 +8,18 @@
 import * as zod from 'zod';
 
 
+export const listPoemsResponseViewCountMin = 0;
+
+
+
 export const ListPoemsResponseItem = zod.object({
   "id": zod.number().int(),
   "title": zod.string(),
   "content": zod.string(),
   "createdAt": zod.string(),
   "position": zod.number().int(),
-  "isExample": zod.boolean()
+  "isExample": zod.boolean(),
+  "viewCount": zod.number().int().min(listPoemsResponseViewCountMin)
 })
 export const ListPoemsResponse = zod.array(ListPoemsResponseItem)
 
@@ -30,13 +35,18 @@ export const CreatePoemBody = zod.object({
   "content": zod.string().min(1).max(createPoemBodyContentMax)
 })
 
+export const createPoemResponseViewCountMin = 0;
+
+
+
 export const CreatePoemResponse = zod.object({
   "id": zod.number().int(),
   "title": zod.string(),
   "content": zod.string(),
   "createdAt": zod.string(),
   "position": zod.number().int(),
-  "isExample": zod.boolean()
+  "isExample": zod.boolean(),
+  "viewCount": zod.number().int().min(createPoemResponseViewCountMin)
 })
 
 
@@ -44,13 +54,18 @@ export const ReorderPoemsBody = zod.object({
   "ids": zod.array(zod.number().int())
 })
 
+export const reorderPoemsResponseViewCountMin = 0;
+
+
+
 export const ReorderPoemsResponseItem = zod.object({
   "id": zod.number().int(),
   "title": zod.string(),
   "content": zod.string(),
   "createdAt": zod.string(),
   "position": zod.number().int(),
-  "isExample": zod.boolean()
+  "isExample": zod.boolean(),
+  "viewCount": zod.number().int().min(reorderPoemsResponseViewCountMin)
 })
 export const ReorderPoemsResponse = zod.array(ReorderPoemsResponseItem)
 
@@ -59,13 +74,18 @@ export const GetPoemParams = zod.object({
   "id": zod.coerce.number().int()
 })
 
+export const getPoemResponseViewCountMin = 0;
+
+
+
 export const GetPoemResponse = zod.object({
   "id": zod.number().int(),
   "title": zod.string(),
   "content": zod.string(),
   "createdAt": zod.string(),
   "position": zod.number().int(),
-  "isExample": zod.boolean()
+  "isExample": zod.boolean(),
+  "viewCount": zod.number().int().min(getPoemResponseViewCountMin)
 })
 
 
@@ -84,13 +104,18 @@ export const UpdatePoemBody = zod.object({
   "content": zod.string().min(1).max(updatePoemBodyContentMax)
 })
 
+export const updatePoemResponseViewCountMin = 0;
+
+
+
 export const UpdatePoemResponse = zod.object({
   "id": zod.number().int(),
   "title": zod.string(),
   "content": zod.string(),
   "createdAt": zod.string(),
   "position": zod.number().int(),
-  "isExample": zod.boolean()
+  "isExample": zod.boolean(),
+  "viewCount": zod.number().int().min(updatePoemResponseViewCountMin)
 })
 
 
@@ -99,6 +124,26 @@ export const DeletePoemParams = zod.object({
 })
 
 export const DeletePoemResponse = zod.void()
+
+
+
+
+
+export const RecordPoemViewParams = zod.object({
+  "id": zod.coerce.number().int().min(1)
+})
+
+export const RecordPoemViewBody = zod.object({
+  "requestId": zod.string().uuid()
+})
+
+export const recordPoemViewResponseViewCountMin = 0;
+
+
+
+export const RecordPoemViewResponse = zod.object({
+  "viewCount": zod.number().int().min(recordPoemViewResponseViewCountMin)
+})
 
 
 export const GetBlogInfoResponse = zod.object({

@@ -12,6 +12,17 @@ export interface Poem {
   createdAt: string;
   position: number;
   isExample: boolean;
+  /** @minimum 0 */
+  viewCount: number;
+}
+
+export interface PoemViewInput {
+  requestId: string;
+}
+
+export interface PoemViewCount {
+  /** @minimum 0 */
+  viewCount: number;
 }
 
 export interface PoemInput {
