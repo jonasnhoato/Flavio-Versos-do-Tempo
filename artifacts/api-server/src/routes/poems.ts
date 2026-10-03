@@ -77,11 +77,9 @@ router.post("/poems", requireEditor, async (req, res): Promise<void> => {
   }
   const poem = await db.transaction(async (tx) => {
     await tx.execute(sql`SELECT pg_advisory_xact_lock(180241)`);
-    const [last] = await tx.select({
-      nextPosition: sql<number>`coalesce(max(${poemsTable.position}), -1) + 1`,
-    }).from(poemsTable);
+    await tx.update(poemsTable).set({ position: sql`${poemsTable.position} + 1` });
     const [created] = await tx.insert(poemsTable).values({
-      title: parsed.data.title.trim(), content: parsed.data.content.trim(), position: last.nextPosition,
+      title: parsed.data.title.trim(), content: parsed.data.content.trim(), position: 0,
     }).returning();
     return created;
   });
