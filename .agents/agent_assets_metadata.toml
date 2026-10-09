@@ -1,0 +1,16 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "UTbApim67SlixeOdt_lZ4"
+uri = "file://exports/migracao_poemas.sql"
+type = "unspecified"
+title = "migracao_poemas.sql"
+description = "Exportação dos 9 registros de poems da produção, com INSERTs PostgreSQL e ajuste da sequência de IDs."
+logical_id = "7e377111-e786-40ca-b6b8-7b8b9dca5be8"
+content_hash = "sha256:6615ddd6570c5154f99bd5d7097fe92533ef4d0ec2e05cd4bd22b60a3c980262"
+size = 30335
+mtime_ms = 1791578861400
+storage_uri = "gcs://replit-rams-assets-reed/rams/assets/repl:63eaf6d7-baa3-40ad-a01f-ba0701bfc0ca/7e377111-e786-40ca-b6b8-7b8b9dca5be8/92d52fe0-2c38-4b64-83d4-a64c1dd64ece"
+storage_version_token = "1791578861903233"
+content_type = "application/octet-stream"
